@@ -15,18 +15,20 @@
   <!-- Full Page Intro -->
   <div class="view" style="background-image: url('Oil.png'); background-repeat: no-repeat; background-size: cover; background-position: center center;">
     <!-- Mask & flexbox options-->
-    <div class="mask">
+    <div class="mask d-flex align-items-center justify-content-center">
       <!-- Content -->
-      <div class="container mx-auto">
+      <div class="container">
         <!--Grid row-->
-        <div class="row align-middle">
+        <div class="row">
           <!--Grid column-->
           <div class="col text-white text-center">
             <h1 class="text-white"><strong>Oil Imperium</strong></h1>
             <hr class="hr">
             <h5 class="text-uppercase text-white"><strong>Spielmenü</strong></h5>
-            <a class="btn btn-outline-light">Create Game</a>
-            <a class="btn btn-outline-light">Join Game</a>
+            <div class="row-6">
+              <div class="btn btn-outline-light col-3">Create Game</div>
+              <div class="btn btn-outline-light col-3">Join Game</div>
+            </div>
           </div>
           <!--Grid column-->
         </div>
@@ -49,7 +51,7 @@
   .mask{
     height: 100%;
     width: 100%;
-    background-color: rgba(0,0,0,0.5);
+    background: radial-gradient(circle, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.38) 100%);
   }
 </style>
 
