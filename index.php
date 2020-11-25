@@ -23,11 +23,12 @@
           <!--Grid column-->
           <div class="col text-white text-center">
             <h1 class="text-white"><strong>Oil Imperium</strong></h1>
-            <hr class="hr">
-            <h5 class="text-uppercase text-white"><strong>Spielmenü</strong></h5>
-            <div class="row-6">
-              <div class="btn btn-outline-light col-3">Create Game</div>
-              <div class="btn btn-outline-light col-3">Join Game</div>
+            <hr>
+            <h6 class="text-uppercase text-white"><strong>ein strategisches Wirtschaftsspiel<br>Wer wird der größte Ölkonzern?</strong></h6>
+            <hr>
+            <div class="d-flex flex-row justify-content-center">
+              <div class="btn btn-outline-light">Spiel erstellen</div>
+              <div class="btn btn-outline-light">Spiel beitreten</div>
             </div>
           </div>
           <!--Grid column-->
@@ -51,7 +52,10 @@
   .mask{
     height: 100%;
     width: 100%;
-    background: radial-gradient(circle, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.38) 100%);
+    background: radial-gradient(circle, rgb(0, 0, 0, 0.8) 15%, transparent 62%);
+  }
+  .btn {
+    margin: 0 2px;
   }
 </style>
 
