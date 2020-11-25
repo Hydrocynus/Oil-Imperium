@@ -13,9 +13,9 @@
   <!-- Full Page Intro -->
   <div class="view" style="background-image: url('Oil.png'); background-repeat: no-repeat; background-size: cover; background-position: center center;">
     <!-- Mask & flexbox options-->
-    <div class="mask rgba-black-light align-items-center">
+    <div class="mask rgba-black-strong align-items-center">
       <!-- Content -->
-      <div class="container align-middle">
+      <div class="container mx-auto">
         <!--Grid row-->
         <div class="row">
           <!--Grid column-->
