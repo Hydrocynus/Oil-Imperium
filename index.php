@@ -43,6 +43,11 @@
   </body>
 
 <style>
+  @font-face {
+    font-family: 'Century Gothic';
+    src: url('CenturyGothic.ttf');
+  }
+
   html,body,.view{
     height: 100%;
   }
