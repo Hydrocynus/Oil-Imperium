@@ -1,15 +1,58 @@
 <!DOCTYPE html>
 <html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Öl Imperium</title>
-</head>
-<body>
-  <form action="">
 
-  </form>
-Hello WWW
-test
-</body>
+  <head>
+    <!--Bootstrap-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oil Imperium</title>
+  </head>
+
+  <body>
+  <!-- Full Page Intro -->
+  <div class="view" style="background-image: url('Oil.png'); background-repeat: no-repeat; background-size: cover; background-position: center center;">
+    <!-- Mask & flexbox options-->
+    <div class="mask d-flex align-items-center justify-content-center">
+      <!-- Content -->
+      <div class="container">
+        <!--Grid row-->
+        <div class="row">
+          <!--Grid column-->
+          <div class="col text-white text-center">
+            <h1 class="text-white"><strong>Oil Imperium</strong></h1>
+            <hr class="hr">
+            <h5 class="text-uppercase text-white"><strong>Spielmenü</strong></h5>
+            <div class="row-6">
+              <div class="btn btn-outline-light col-3">Create Game</div>
+              <div class="btn btn-outline-light col-3">Join Game</div>
+            </div>
+          </div>
+          <!--Grid column-->
+        </div>
+        <!--Grid row-->
+      </div>
+      <!-- Content -->
+    </div>
+    <!-- Mask & flexbox options-->
+  </div>
+  <!-- Full Page Intro -->
+  </body>
+
+<style>
+  html,body,.view{
+    height: 100%;
+  }
+  *{
+    font-family:"Century Gothic";
+  }
+  .mask{
+    height: 100%;
+    width: 100%;
+    background: radial-gradient(circle, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.38) 100%);
+  }
+</style>
+
 </html>
