@@ -26,9 +26,9 @@
             <hr>
             <h6 class="text-uppercase text-white"><strong>—&nbsp&nbsp Das wirtschaftliche Strategiespiel &nbsp&nbsp—</strong></h6>
             <hr>
-            <div class="d-flex flex-row justify-content-center">
-              <div class="btn btn-outline-light">Spiel erstellen</div>
-              <div class="btn btn-outline-light">Spiel beitreten</div>
+            <div class="row-12">
+              <div class="col-2 btn mx-1 btn-outline-light">Spiel erstellen</div>
+              <div class="col-2 btn mx-1 btn-outline-light">Spiel beitreten</div>
             </div>
           </div>
           <!--Grid column-->
@@ -58,9 +58,6 @@
     height: 100%;
     width: 100%;
     background: radial-gradient(circle, rgb(0, 0, 0, 0.8) 15%, transparent 62%);
-  }
-  .btn {
-    margin: 0 2px;
   }
 </style>
 
