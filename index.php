@@ -22,9 +22,9 @@
         <div class="row">
           <!--Grid column-->
           <div class="col text-white text-center">
-            <h1 class="text-white"><strong>Oil Imperium</strong></h1>
+            <h1 class="text-white"><strong>Öl Imperium</strong></h1>
             <hr>
-            <h6 class="text-uppercase text-white"><strong>ein strategisches Wirtschaftsspiel<br>Wer wird der größte Ölkonzern?</strong></h6>
+            <h6 class="text-uppercase text-white"><strong>—&nbsp&nbsp Das wirtschaftliche Strategiespiel &nbsp&nbsp—</strong></h6>
             <hr>
             <div class="d-flex flex-row justify-content-center">
               <div class="btn btn-outline-light">Spiel erstellen</div>
