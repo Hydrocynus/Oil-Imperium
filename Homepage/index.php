@@ -8,35 +8,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Oil Imperium</title>
+    <script>
+      function checkInput(input) {
+        console.debug("test");
+        input.value = input.value.toUpperCase();
+        input.value = input.value.replace(/\s/, "");
+        input.value = input.value.substring(0, 4);
+      }
+    </script>
   </head>
 
   <body>
     <?php
       /**
-       * Generiert einen HTML-Button fuer ein form.
+       * Generiert einen HTML-Button fuer eine form.
        * @author Tobias Tim
        * @version 28.11.2020 Bugfix (Tim)
        * @since 28.11.2020
-       * @param string $action Schluesselattribut der Anfrage bei Klick.
-       * @param string $value Wert der Anfrage bei Klick.
+       * @param string $action Schluesselattribut der Anfrage.
+       * @param string $value Wert der Anfrage.
        * @param string $text Inhalt des Buttons.
        * @param string $type (Optional) Typ des Form-Buttons. Standard ist submit.
-       * @param string $classes (Optionak) Wenn angegeben, wird das class-Attribut ueberschrieben.
-       * @return string Der generierte Button. duh.
+       * @param string $classes (Optional) Wenn angegeben, wird das class-Attribut ueberschrieben.
+       * @param string $attr (Optional) Zusaetzliche Attribute koennen hier angegeben werden.
+       * @return string Der generierte Button. duh!
        */
-      function create_Button(string $action, string $value, string $text, string $type = "submit", string $classes = null) {
-        if (!in_array($type, ['submit', 'reset'])) $type = "submit";
+      function create_Button(string $action, string $value, string $text, string $type = "submit", string $classes = null, string $attr = "") {
+        if (!in_array($type, ['submit', 'reset', 'button'])) $type = "submit";
+
         if (!isset($classes)) $classes = "col-auto mx-1 btn-outline-light";
 
-        return "<button type=\"$type\" class=\"btn $classes\" name=\"$action\" value=\"$value\">$text</button>";
+        return "<button type=\"$type\" class=\"btn $classes\" name=\"$action\" value=\"$value\" $attr>$text</button>";
       }
 
-      $btnCreate = create_Button("action", "create", "Spiel Erstellen");
-      
-      $JoinBtn = '<button type="submit" class="col-auto btn mx-1 btn-outline-light" value="join" name="action">Spiel beitreten</button>';
-      $CreateBtn = '<button type="submit" class="col-auto btn mx-1 btn-outline-light" value="create" name="action">Spiel erstellen</button>';
-      $CodeInput = '<input type="text" name="gameId" class="col-auto mx-1">';
-      $CodeBtn = '<button type="submit" class="col-auto btn mx-1 btn-outline-light" value="JoinWithCode" name="action">Spiel beitreten mit Code</button>';
+      /**
+       * Generiert ein HTML-Input fuer eine form.
+       * @author Tobias
+       * @version 28.11.2020
+       * @since 28.11.2020
+       * @param string $action Schluesselattribut der Anfrage.
+       * @param string $value Wert der Anfrage.
+       * @param string $placeholder Platzhalter des Inputfeldes.
+       * @param string $type (Optional) Typ des Inputfeldes. Standard ist text.
+       * @param string $classes (Optional) Wenn angegeben, wird das class-Attribut ueberschrieben.
+       * @param string $attr (Optional) Zusaetzliche Attribute koennen hier angegeben werden.
+       * @return string Das generierte Input. duh!
+       */
+      function create_Input(string $action, string $value, string $placeholder, string $type = "text", string $classes = null, string $attr = "") {
+        if (!in_array($type, ['text','number','button','checkbox','color','date','datetime-local','email','file','hidden','image','month','number','password','radio','range','reset','search','submit','tel','text','time','url','week'])) $type = "text";
+
+        if (!isset($classes)) $classes = "col-auto mx-1 btn-outline-light";
+
+        return "<input type=\"$type\" class=\"btn $classes\" name=\"$action\" value=\"$value\" placeholder=\"$placeholder\" $attr>";
+      }
+
+      $btnCreate = create_Button('action', 'create', 'Spiel erstellen');
+      $btnShowInput = create_Button('action', 'showInput', 'Spiel beitreten');
+      $inpJoin = create_Input('code', '', 'CODE', 'text', null, 'autofocus oninput="checkInput(this)" size="4" maxlength="4" autocomplete="off"');
+      $btnJoin = create_Button('action', 'join', '▶');
     ?>
   <!-- Full Page Intro -->
   <div class="view" style="background-image: url('Oil.png'); background-repeat: no-repeat; background-size: cover; background-position: center center;">
@@ -53,20 +82,25 @@
             <h6 class="text-uppercase text-white"><strong>—&nbsp&nbsp Das wirtschaftliche Strategiespiel &nbsp&nbsp—</strong></h6>
             <hr>
             <form class="row-12" action="index.php" method="get">
-            <?php 
-            if(!isset($_GET["action"])){
-              // $btnShowCodeInput = create_Button("action", "showCodeInput", "Spiel ");
-              echo $btnCreate . '<input type="text" name="gameId" class="col-auto mx-1" value="Gamecode Eingeben">';
-            }
-            elseif($_GET["action"]=="create"){
-                echo "du hast das spiel erstellt";
-            }
-            elseif($_GET["action"]=="join"){
-                echo "Bitte gib hier den Game Code ein";
-            }
+            <?php
+              $action = isset($_GET['action']) ? $_GET['action'] : "";
+
+              switch ($action) {
+                case 'create':
+                  echo "du hast das spiel erstellt";
+                  break;
+                case 'showInput':
+                  echo $inpJoin;
+                  echo $btnJoin;
+                  break;
+                case 'join':
+                  echo "Du bist dem Spiel mit dem code {$_GET['code']} beigetreten";
+                  break;
+                default:
+                  echo $btnCreate;
+                  echo $btnShowInput;
+              }
             ?>
-            
-            <button type="submit" class="col-auto btn mx-1 btn-outline-light" value="joinCode" name="action"></button>
             </form>
           </div>
           <!--Grid column-->
