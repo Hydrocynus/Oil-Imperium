@@ -11,6 +11,33 @@
   </head>
 
   <body>
+    <?php
+      /**
+       * Generiert einen HTML-Button fuer ein form.
+       * @author Tobias Tim
+       * @version 28.11.2020 Bugfix (Tim)
+       * @since 28.11.2020
+       * @param string $action Schluesselattribut der Anfrage bei Klick.
+       * @param string $value Wert der Anfrage bei Klick.
+       * @param string $text Inhalt des Buttons.
+       * @param string $type (Optional) Typ des Form-Buttons. Standard ist submit.
+       * @param string $classes (Optionak) Wenn angegeben, wird das class-Attribut ueberschrieben.
+       * @return string Der generierte Button. duh.
+       */
+      function create_Button(string $action, string $value, string $text, string $type = "submit", string $classes = null) {
+        if (!in_array($type, ['submit', 'reset'])) $type = "submit";
+        if (!isset($classes)) $classes = "col-auto mx-1 btn-outline-light";
+
+        return "<button type=\"$type\" class=\"btn $classes\" name=\"$action\" value=\"$value\">$text</button>";
+      }
+
+      $btnCreate = create_Button("action", "create", "Spiel Erstellen");
+      
+      $JoinBtn = '<button type="submit" class="col-auto btn mx-1 btn-outline-light" value="join" name="action">Spiel beitreten</button>';
+      $CreateBtn = '<button type="submit" class="col-auto btn mx-1 btn-outline-light" value="create" name="action">Spiel erstellen</button>';
+      $CodeInput = '<input type="text" name="gameId" class="col-auto mx-1">';
+      $CodeBtn = '<button type="submit" class="col-auto btn mx-1 btn-outline-light" value="JoinWithCode" name="action">Spiel beitreten mit Code</button>';
+    ?>
   <!-- Full Page Intro -->
   <div class="view" style="background-image: url('Oil.png'); background-repeat: no-repeat; background-size: cover; background-position: center center;">
     <!-- Mask & flexbox options-->
@@ -25,9 +52,21 @@
             <hr>
             <h6 class="text-uppercase text-white"><strong>—&nbsp&nbsp Das wirtschaftliche Strategiespiel &nbsp&nbsp—</strong></h6>
             <hr>
-            <form class="row-12" action="../classes/GameControll.php" method="get">
-              <input type="submit" class="col-auto btn mx-1 btn-outline-light" value="Spiel erstellen" name="action">
-              <input type="submit" class="col-auto btn mx-1 btn-outline-light" value="Spiel beitreten" name="action">
+            <form class="row-12" action="index.php" method="get">
+            <?php 
+            if(!isset($_GET["action"])){
+              // $btnShowCodeInput = create_Button("action", "showCodeInput", "Spiel ");
+              echo $btnCreate . '<input type="text" name="gameId" class="col-auto mx-1" value="Gamecode Eingeben">';
+            }
+            elseif($_GET["action"]=="create"){
+                echo "du hast das spiel erstellt";
+            }
+            elseif($_GET["action"]=="join"){
+                echo "Bitte gib hier den Game Code ein";
+            }
+            ?>
+            
+            <button type="submit" class="col-auto btn mx-1 btn-outline-light" value="joinCode" name="action"></button>
             </form>
           </div>
           <!--Grid column-->
