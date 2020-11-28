@@ -1,0 +1,21 @@
+*{
+  font-family:"Century Gothic";
+}
+/* Vollbild */
+html, body, #background, .mask{
+  height: 100%;
+  width: 100%;
+}
+
+/* Schatten fuer Text */
+.mask{
+  background: radial-gradient(circle, rgb(0, 0, 0, 0.8) 15%, transparent 62%);
+}
+
+/* Hintergrundbild */
+#background {
+  background-image: url('Oil.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+}

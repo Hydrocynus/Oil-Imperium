@@ -1,0 +1,42 @@
+<?php
+/**
+ * Generiert einen HTML-Button fuer eine form.
+ * @author Tobias Tim
+ * @version 28.11.2020 Bugfix (Tim)
+ * @since 28.11.2020
+ * @param string $action Schluesselattribut der Anfrage.
+ * @param string $value Wert der Anfrage.
+ * @param string $text Inhalt des Buttons.
+ * @param string $type (Optional) Typ des Form-Buttons. Standard ist submit.
+ * @param string $classes (Optional) Wenn angegeben, wird das class-Attribut ueberschrieben.
+ * @param string $attr (Optional) Zusaetzliche Attribute koennen hier angegeben werden.
+ * @return string Der generierte Button. duh!
+ */
+function create_Button(string $action, string $value, string $text, string $type = "submit", string $classes = null, string $attr = "") {
+  if (!in_array($type, ['submit', 'reset', 'button'])) $type = "submit";
+
+  if (!isset($classes)) $classes = "col-auto mx-1 btn-outline-light";
+
+  return "<button type=\"$type\" class=\"btn $classes\" name=\"$action\" value=\"$value\" $attr>$text</button>";
+}
+
+/**
+ * Generiert ein HTML-Input fuer eine form.
+ * @author Tobias
+ * @version 28.11.2020
+ * @since 28.11.2020
+ * @param string $action Schluesselattribut der Anfrage.
+ * @param string $value Wert der Anfrage.
+ * @param string $placeholder Platzhalter des Inputfeldes.
+ * @param string $type (Optional) Typ des Inputfeldes. Standard ist text.
+ * @param string $classes (Optional) Wenn angegeben, wird das class-Attribut ueberschrieben.
+ * @param string $attr (Optional) Zusaetzliche Attribute koennen hier angegeben werden.
+ * @return string Das generierte Input. duh!
+ */
+function create_Input(string $action, string $value, string $placeholder, string $type = "text", string $classes = null, string $attr = "") {
+  if (!in_array($type, ['text','number','button','checkbox','color','date','datetime-local','email','file','hidden','image','month','number','password','radio','range','reset','search','submit','tel','text','time','url','week'])) $type = "text";
+
+  if (!isset($classes)) $classes = "col-auto mx-1 btn-outline-light";
+
+  return "<input type=\"$type\" class=\"btn $classes\" name=\"$action\" value=\"$value\" placeholder=\"$placeholder\" $attr>";
+}
