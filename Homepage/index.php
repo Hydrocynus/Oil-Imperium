@@ -25,10 +25,10 @@
             <hr>
             <h6 class="text-uppercase text-white"><strong>—&nbsp&nbsp Das wirtschaftliche Strategiespiel &nbsp&nbsp—</strong></h6>
             <hr>
-            <div class="row-12">
-              <div class="col-2 btn mx-1 btn-outline-light">Spiel erstellen</div>
-              <div class="col-2 btn mx-1 btn-outline-light">Spiel beitreten</div>
-            </div>
+            <form class="row-12" action="../classes/GameControll.php" method="get">
+              <input type="submit" class="col-auto btn mx-1 btn-outline-light" value="Spiel erstellen" name="create" >
+              <input type="submit" class="col-auto btn mx-1 btn-outline-light" value="Spiel beitreten" name="join">
+            </form>
           </div>
           <!--Grid column-->
         </div>
