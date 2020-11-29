@@ -2,12 +2,13 @@
  - Startseite des Spiels.
  - Zeigt und behandelt Spielerstellung und Spielbeitritt.
  - @author Jannis Tim Tobias
- - @version 28.11.2020
+ - @version 29.11.2020 (Tobias: Bugfix - flascher Include-Path.)
  - @since 25.11.2020
 -->
 <?php
-  require_once("../default-html-head.php");
-  require_once("../classes/Utils.php");
+  set_include_path("../");
+  require_once("php/default-html-head.php");
+  require_once("php/Utils.php");
 
   $btnCreate = create_Button('action', 'create', 'Spiel erstellen');
   $btnShowInput = create_Button('action', 'code', 'Spiel beitreten');
