@@ -9,6 +9,9 @@
   set_include_path("../");
   require_once("php/default-html-head.php");
   require_once("php/Utils.php");
+  require_once('classes/GameControl.php');
+
+  $barrel = new GameControl();
 
   $btnCreate = create_Button('action', 'create', 'Spiel erstellen');
   $btnShowInput = create_Button('action', 'code', 'Spiel beitreten');
@@ -46,7 +49,12 @@
               echo $btnJoin;
               break;
             case 'join':
-              echo "Du bist dem Spiel mit dem code {$_GET['code']} beigetreten";
+              // echo "Du bist dem Spiel mit dem code {$_GET['code']} beigetreten";
+              $resp = $barrel->getGameInfoByCode($_GET['code']);
+              if (!isset($resp['ip']) || !isset($resp['port']))
+                echo "Code '{$_GET['code']}' nicht gefunden!";
+              else
+                echo $resp['ip'] . ':' . $resp['port'];
               break;
             default:
               echo $btnCreate;
