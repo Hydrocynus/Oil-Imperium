@@ -42,12 +42,8 @@
               break;
             case 'code':
               echo $btnHome;
-              echo create_Button('', '', '<i class="fas fa-long-arrow-alt-left"></i>', "button", null, 'onclick="d3.select(\'form\').node().submit()"');
-              echo create_Button('', '', '<i class="fas fa-arrow-left"></i>', "button", null, 'onclick="d3.select(\'form\').node().submit()"');
-              echo create_Button('', '', '<i class="fas fa-reply"></i>', "button", null, 'onclick="d3.select(\'form\').node().submit()"');
               echo $inpJoin;
               echo $btnJoin;
-              echo "<br>Welcher Home-Button sieht besser aus?";
               break;
             case 'join':
               echo "Du bist dem Spiel mit dem code {$_GET['code']} beigetreten";
