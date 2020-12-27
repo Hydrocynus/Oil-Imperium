@@ -1,4 +1,6 @@
 <?php
+require_once('Bitmask.php');
+
 /**
  * Generiert einen HTML-Button fuer eine form.
  * @author Tobias Tim
@@ -39,4 +41,40 @@ function create_Input(string $action, string $value, string $placeholder, string
   if (!isset($classes)) $classes = "col-auto mx-1 btn-outline-light";
 
   return "<input type=\"$type\" class=\"btn $classes\" name=\"$action\" value=\"$value\" placeholder=\"$placeholder\" $attr>";
+}
+
+/**
+ * Generiert einen String mit zufaelligen Zeichen.
+ * @author Tobias
+ * @version 27.12.2020
+ * @since 02.12.2020
+ * @param int $length Laenge des zu generierenden Strings.
+ * @param int $type Bitmaske zur bestimmung der Zeichengruppe des generierten Strings:
+ *                  - OILIMP_NUMBERS            Zahlen.
+ *                  - OILIMP_UPPER_CASE_LETTERS Grossbuchstaben.
+ *                  - OILIMP_LOWER_CASE_LETTERS Kleinbuchstaben.
+ * @return string Generierter String.
+ */
+function generate_random_string(int $length, int $type) {
+  $chars = [];
+
+  if ($type & OILIMP_NUMBERS) {
+    $chars = array_merge($chars, ['0','1','2','3','4','5','6','7','8','9']);
+  }
+  if ($type & OILIMP_LOWER_CASE_LETTERS) {
+    $chars = array_merge($chars, ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']);
+  }
+  if ($type & OILIMP_UPPER_CASE_LETTERS) {
+    $chars = array_merge($chars, ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']);
+  }
+
+  $chars = array_unique($chars);
+  $lenChars = count($chars);
+  $string = '';
+
+  for ($length; $length>0; $length--) {
+    $string .= $chars[random_int(0, $lenChars-1)];
+  }
+
+  return $string;
 }
