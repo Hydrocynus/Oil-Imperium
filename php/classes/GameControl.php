@@ -1,26 +1,30 @@
 <?php
 require_once('Utils.php');
 class GameControl extends Barrel {
+  public $createGameError;
 
   /**
    * Erstellt ein neues Spiel.
    * Gneriert Code, IP und Port.
    * Speichert in Datenbank.
    * @author Tobias
-   * @version 27.12.2020
+   * @version 28.12.2020
    * @since 02.12.2020
    * @return string Code des neu erstellten Spiels.
    */
-  public function createGame() {
+  public function createGame() : string {
     $code = $this->generateCode();
     $ip   = $this->getIp();
     $port = $this->generatePort($ip);
+    $resp = $this->addGame($code, $ip, $port);
 
-    // in DB speichern
-
-    return "$code [$ip:$port]";
-
-    // return $code;
+    if ($resp === true) {
+      $this->createGameError = "";
+      return $code;
+    } else {
+      $this->createGameError = $resp;
+      return false;
+    }
   }
 
   /**
@@ -31,7 +35,7 @@ class GameControl extends Barrel {
    * @since 02.12.2020
    * @return string Gnerierter Code.
    */
-  private function generateCode() {
+  private function generateCode() : string {
     do {
       $code = generateRandomString(4, OILIMP_LETTERS_UPPER_CASE);
     } while ($this->codeExists($code));
@@ -46,9 +50,9 @@ class GameControl extends Barrel {
    * @param string $code Code, der ueberprueft werden soll.
    * @return bool true, wenn der Code bereits existiert.
    */
-  private function codeExists(string $code) {
+  private function codeExists(string $code) : bool {
     $resp = $this->getGameInfoByCode($code);
-    return isset($resp['ip']) && isset($resp['port']) && isset($game['spielcode']);
+    return isset($resp['ip']) && isset($resp['port']) && isset($resp['spielcode']);
   }
 
   /**
@@ -59,7 +63,7 @@ class GameControl extends Barrel {
    * @since 27.12.2020
    * @return string IP
    */
-  private function getIp() {
+  private function getIp() : string {
     return gethostbyname(gethostname());
   }
 
@@ -71,7 +75,7 @@ class GameControl extends Barrel {
    * @since 27.12.2020
    * @return string Gnerierter Port.
    */
-  private function generatePort(string $ip) {
+  private function generatePort(string $ip) : string {
     do {
       $port = generateRandomString(5, OILIMP_NUMBERS);
     } while (!$this->portInRange($port) || !$this->portAvailable($port, $ip) || $this->portExists($port, $ip));
@@ -87,7 +91,7 @@ class GameControl extends Barrel {
    * @param string $ip IP, mit der der Port in Verbindung steht.
    * @return bool true, wenn der Port bereits existiert.
    */
-  private function portExists(string $port, string $ip) {
+  private function portExists(string $port, string $ip) : bool {
     $resp = $this->getGameInfoByIP($ip);
     foreach ($resp as $game) {
       if (isset($game['ip']) && isset($game['port']) && isset($game['spielcode'])) {
@@ -106,7 +110,7 @@ class GameControl extends Barrel {
    * @param string|int $port Zu ueberpruefender Port.
    * @return bool true, wenn Port verfuegbar ist.
    */
-  private function portAvailable($port) {
+  private function portAvailable($port) : bool {
     $socket = @fsockopen("localhost", $port, $errno, $errstr, 0.1);
     if (!$socket) {
         return true;
@@ -124,7 +128,33 @@ class GameControl extends Barrel {
    * @param string|int $port Zu ueberpruefender Port.
    * @return bool true, wenn der Port im gueltigen Bereich liegt.
    */
-  private function portInRange($port) {
+  private function portInRange($port) : bool {
     return $port >= 49152 && $port <= 65535;
+  }
+
+  /**
+   * Leitet zur Lobby eines Spielcodes weiter.
+   * @author Tobias
+   * @version 27.12.2020
+   * @since 27.12.2020
+   * @param string $code Spielcode.
+   * @return void
+   */
+  public function joinGame(string $code) : void {
+    if (!$this->codeExists($code)) {
+      return;
+    }
+
+    $game = $this->getGameInfoByCode($code);
+    $ip   = $game['ip'];
+    $port = $game['port'];
+
+    $script = "<script>
+                localStorage.setItem('code', '$code');
+                localStorage.setItem('ip',   '$ip');
+                localStorage.setItem('port', '$port');
+                location = '../game/lobby.php';
+              </script>";
+    echo $script;
   }
 }

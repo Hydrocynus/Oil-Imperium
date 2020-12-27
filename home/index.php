@@ -45,8 +45,10 @@
 
           switch ($action) {
             case 'create':
-              echo "du hast das Spiel erstellt";
-              echo "<br>CODE: " . $barrel->createGame();
+              $code = $barrel->createGame();
+              echo $btnHome;
+              echo "Weiterleitung zu Lobby... (WIP)";
+              $barrel->joinGame($code);
               break;
             case 'code':
               echo $btnHome;
@@ -54,12 +56,10 @@
               echo $btnJoin;
               break;
             case 'join':
-              // echo "Du bist dem Spiel mit dem code {$_GET['code']} beigetreten";
-              $resp = $barrel->getGameInfoByCode($_GET['code']);
-              if (!isset($resp['ip']) || !isset($resp['port']))
-                echo "Code '{$_GET['code']}' nicht gefunden!";
-              else
-                echo $resp['ip'] . ':' . $resp['port'];
+              $code = $_GET['code'];
+              echo $btnHome;
+              echo "Weiterleitung zu Lobby... (WIP)";
+              $barrel->joinGame($code);
               break;
             default:
               echo $btnCreate;
