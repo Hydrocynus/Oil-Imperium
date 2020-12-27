@@ -30,7 +30,7 @@ SET time_zone = "+00:00";
 CREATE TABLE IF NOT EXISTS `spiel` (
   `SpielCode` char(4) NOT NULL,
   `IP` varchar(15) NOT NULL,
-  `Port` int(11) NOT NULL,
+  `Port` int NOT NULL,
   `Letzte_Aenderung` date DEFAULT NULL,
   PRIMARY KEY (`SpielCode`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
