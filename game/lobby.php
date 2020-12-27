@@ -28,9 +28,19 @@
           </thead>
           <tbody>
             <tr>
-              <td><input type="text"></td>
-              <td><input type="color"></td>
+              <td><input type="text" value="Player"></td>
+              <td><input type="color" value="#ff0000"></td>
               <td><input type="checkbox"></td>
+            </tr>
+            <tr>
+              <td><input type="text" value="Ich" readonly></td>
+              <td><input type="color" value="#ff9900" disabled></td>
+              <td><input type="checkbox" checked disabled></td>
+            </tr>
+            <tr>
+              <td><input type="text" value="Son Typ" readonly></td>
+              <td><input type="color" value="#00ffff" disabled></td>
+              <td><input type="checkbox" disabled></td>
             </tr>
           </tbody>
         </table>
