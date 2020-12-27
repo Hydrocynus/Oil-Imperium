@@ -6,10 +6,10 @@
  - @since 25.11.2020
 -->
 <?php
-  set_include_path("../");
-  require_once("php/default-html-head.php");
-  require_once("php/Utils.php");
-  require_once('classes/GameControl.php');
+  set_include_path("../php/");
+  require_once("default-html-head.php");
+  require_once("Utils.php");
+  spl_autoload_register(function ($class) { require_once("classes/$class.php"); });
 
   $barrel = new GameControl();
 
@@ -32,7 +32,11 @@
       <div class="container text-white text-center">
         <h1 class="text-white">&Oumll Imperium</h1>
         <hr>
-        <h6 class="text-uppercase text-white">—&nbsp&nbsp Das wirtschaftliche Strategiespiel &nbsp&nbsp—</h6>
+        <h6 class="text-uppercase text-white">
+          —&nbsp&nbsp
+          <?php echo rand(0,10) === 0 ? "Das strategische Wirtschaftsspiel" : "Das wirtschaftliche Strategiespiel" ?>
+          &nbsp&nbsp—
+        </h6>
         <hr>
         <!-- form -->
         <form class="row-12" action="" method="get">
@@ -41,7 +45,8 @@
 
           switch ($action) {
             case 'create':
-              echo "du hast das spiel erstellt";
+              echo "du hast das Spiel erstellt";
+              echo "<br>CODE: " . $barrel->create_game();
               break;
             case 'code':
               echo $btnHome;
