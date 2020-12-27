@@ -13,11 +13,11 @@
 
   $barrel = new GameControl();
 
-  $btnCreate = create_Button('action', 'create', 'Spiel erstellen');
-  $btnShowInput = create_Button('action', 'code', 'Spiel beitreten');
-  $inpJoin = create_Input('code', '', 'CODE', 'text', null, 'autofocus oninput="checkCode(this)" maxlength="4" autocomplete="off"');
-  $btnJoin = create_Button('action', 'join', '<i class="fas fa-check"></i>', "submit", null, 'disabled');
-  $btnHome = create_Button('', '', '<i class="fas fa-home"></i>', "button", null, 'onclick="d3.select(\'form\').node().submit()"');
+  $btnCreate = createButton('action', 'create', 'Spiel erstellen');
+  $btnShowInput = createButton('action', 'code', 'Spiel beitreten');
+  $inpJoin = createInput('code', '', 'CODE', 'text', null, 'autofocus oninput="checkCode(this)" maxlength="4" autocomplete="off"');
+  $btnJoin = createButton('action', 'join', '<i class="fas fa-check"></i>', "submit", null, 'disabled');
+  $btnHome = createButton('', '', '<i class="fas fa-home"></i>', "button", null, 'onclick="d3.select(\'form\').node().submit()"');
 ?>
   <link rel="stylesheet" href="home.css">
   <script src="home.js"></script>
@@ -46,7 +46,7 @@
           switch ($action) {
             case 'create':
               echo "du hast das Spiel erstellt";
-              echo "<br>CODE: " . $barrel->create_game();
+              echo "<br>CODE: " . $barrel->createGame();
               break;
             case 'code':
               echo $btnHome;

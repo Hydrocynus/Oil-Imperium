@@ -11,10 +11,10 @@ class GameControl extends Barrel {
    * @since 02.12.2020
    * @return string Code des neu erstellten Spiels.
    */
-  public function create_game() {
-    $code = $this->generate_code();
-    $ip   = $this->get_ip();
-    $port = $this->generate_port($ip);
+  public function createGame() {
+    $code = $this->generateCode();
+    $ip   = $this->getIp();
+    $port = $this->generatePort($ip);
 
     // in DB speichern
 
@@ -31,10 +31,10 @@ class GameControl extends Barrel {
    * @since 02.12.2020
    * @return string Gnerierter Code.
    */
-  private function generate_code() {
+  private function generateCode() {
     do {
-      $code = generate_random_string(4, OILIMP_UPPER_CASE_LETTERS);
-    } while ($this->code_exists($code));
+      $code = generateRandomString(4, OILIMP_LETTERS_UPPER_CASE);
+    } while ($this->codeExists($code));
     return $code;
   }
 
@@ -46,7 +46,7 @@ class GameControl extends Barrel {
    * @param string $code Code, der ueberprueft werden soll.
    * @return bool true, wenn der Code bereits existiert.
    */
-  private function code_exists(string $code) {
+  private function codeExists(string $code) {
     $resp = $this->getGameInfoByCode($code);
     return isset($resp['ip']) && isset($resp['port']) && isset($game['spielcode']);
   }
@@ -59,7 +59,7 @@ class GameControl extends Barrel {
    * @since 27.12.2020
    * @return string IP
    */
-  private function get_ip() {
+  private function getIp() {
     return gethostbyname(gethostname());
   }
 
@@ -71,10 +71,10 @@ class GameControl extends Barrel {
    * @since 27.12.2020
    * @return string Gnerierter Port.
    */
-  private function generate_port(string $ip) {
+  private function generatePort(string $ip) {
     do {
-      $port = generate_random_string(5, OILIMP_NUMBERS);
-    } while (!$this->port_in_range($port) || !$this->port_available($port, $ip) || $this->port_exists($port, $ip));
+      $port = generateRandomString(5, OILIMP_NUMBERS);
+    } while (!$this->portInRange($port) || !$this->portAvailable($port, $ip) || $this->portExists($port, $ip));
     return $port;
   }
 
@@ -87,7 +87,7 @@ class GameControl extends Barrel {
    * @param string $ip IP, mit der der Port in Verbindung steht.
    * @return bool true, wenn der Port bereits existiert.
    */
-  private function port_exists(string $port, string $ip) {
+  private function portExists(string $port, string $ip) {
     $resp = $this->getGameInfoByIP($ip);
     foreach ($resp as $game) {
       if (isset($game['ip']) && isset($game['port']) && isset($game['spielcode'])) {
@@ -106,7 +106,7 @@ class GameControl extends Barrel {
    * @param string|int $port Zu ueberpruefender Port.
    * @return bool true, wenn Port verfuegbar ist.
    */
-  private function port_available($port) {
+  private function portAvailable($port) {
     $socket = @fsockopen("localhost", $port, $errno, $errstr, 0.1);
     if (!$socket) {
         return true;
@@ -124,7 +124,7 @@ class GameControl extends Barrel {
    * @param string|int $port Zu ueberpruefender Port.
    * @return bool true, wenn der Port im gueltigen Bereich liegt.
    */
-  private function port_in_range($port) {
+  private function portInRange($port) {
     return $port >= 49152 && $port <= 65535;
   }
 }

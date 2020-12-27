@@ -14,7 +14,7 @@ require_once('Bitmask.php');
  * @param string $attr (Optional) Zusaetzliche Attribute koennen hier angegeben werden.
  * @return string Der generierte Button. duh!
  */
-function create_Button(string $action, string $value, string $text, string $type = "submit", string $classes = null, string $attr = "") {
+function createButton(string $action, string $value, string $text, string $type = "submit", string $classes = null, string $attr = "") {
   if (!in_array($type, ['submit', 'reset', 'button'])) $type = "submit";
 
   if (!isset($classes)) $classes = "col-auto mx-1 btn-outline-light";
@@ -35,7 +35,7 @@ function create_Button(string $action, string $value, string $text, string $type
  * @param string $attr (Optional) Zusaetzliche Attribute koennen hier angegeben werden.
  * @return string Das generierte Input. duh!
  */
-function create_Input(string $action, string $value, string $placeholder, string $type = "text", string $classes = null, string $attr = "") {
+function createInput(string $action, string $value, string $placeholder, string $type = "text", string $classes = null, string $attr = "") {
   if (!in_array($type, ['text','number','button','checkbox','color','date','datetime-local','email','file','hidden','image','month','number','password','radio','range','reset','search','submit','tel','text','time','url','week'])) $type = "text";
 
   if (!isset($classes)) $classes = "col-auto mx-1 btn-outline-light";
@@ -51,20 +51,20 @@ function create_Input(string $action, string $value, string $placeholder, string
  * @param int $length Laenge des zu generierenden Strings.
  * @param int $type Bitmaske zur bestimmung der Zeichengruppe des generierten Strings:
  *                  - OILIMP_NUMBERS            Zahlen.
- *                  - OILIMP_UPPER_CASE_LETTERS Grossbuchstaben.
- *                  - OILIMP_LOWER_CASE_LETTERS Kleinbuchstaben.
+ *                  - OILIMP_LETTERS_UPPER_CASE Grossbuchstaben.
+ *                  - OILIMP_LETTERS_LOWER_CASE Kleinbuchstaben.
  * @return string Generierter String.
  */
-function generate_random_string(int $length, int $type) {
+function generateRandomString(int $length, int $type) {
   $chars = [];
 
   if ($type & OILIMP_NUMBERS) {
     $chars = array_merge($chars, ['0','1','2','3','4','5','6','7','8','9']);
   }
-  if ($type & OILIMP_LOWER_CASE_LETTERS) {
+  if ($type & OILIMP_LETTERS_LOWER_CASE) {
     $chars = array_merge($chars, ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']);
   }
-  if ($type & OILIMP_UPPER_CASE_LETTERS) {
+  if ($type & OILIMP_LETTERS_UPPER_CASE) {
     $chars = array_merge($chars, ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']);
   }
 
