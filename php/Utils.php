@@ -14,7 +14,7 @@ require_once('Bitmask.php');
  * @param string $attr (Optional) Zusaetzliche Attribute koennen hier angegeben werden.
  * @return string Der generierte Button. duh!
  */
-function createButton(string $action, string $value, string $text, string $type = "submit", string $classes = null, string $attr = "") {
+function createButton(string $action, string $value, string $text, string $type = "submit", string $classes = null, string $attr = "") : string {
   if (!in_array($type, ['submit', 'reset', 'button'])) $type = "submit";
 
   if (!isset($classes)) $classes = "col-auto mx-1 btn-outline-light";
@@ -35,7 +35,7 @@ function createButton(string $action, string $value, string $text, string $type 
  * @param string $attr (Optional) Zusaetzliche Attribute koennen hier angegeben werden.
  * @return string Das generierte Input. duh!
  */
-function createInput(string $action, string $value, string $placeholder, string $type = "text", string $classes = null, string $attr = "") {
+function createInput(string $action, string $value, string $placeholder, string $type = "text", string $classes = null, string $attr = "") : string {
   if (!in_array($type, ['text','number','button','checkbox','color','date','datetime-local','email','file','hidden','image','month','number','password','radio','range','reset','search','submit','tel','text','time','url','week'])) $type = "text";
 
   if (!isset($classes)) $classes = "col-auto mx-1 btn-outline-light";
@@ -55,7 +55,7 @@ function createInput(string $action, string $value, string $placeholder, string 
  *                  - OILIMP_LETTERS_LOWER_CASE Kleinbuchstaben.
  * @return string Generierter String.
  */
-function generateRandomString(int $length, int $type) {
+function generateRandomString(int $length, int $type) : string {
   $chars = [];
 
   if ($type & OILIMP_NUMBERS) {
