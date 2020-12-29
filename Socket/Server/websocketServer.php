@@ -88,7 +88,7 @@ abstract class websocketServer {
             else { 
               //recieve Data 
               echo "\nbuf: ".$buf;
-              $data = $this->deframe($buf);
+              $data = $this->deframe($u, $buf);
               //$this->send($u, $data["pl"]);
               // echo "\n Selected User: ". $u->id;
               // $this->read($u, $buf) //!
@@ -294,10 +294,11 @@ abstract class websocketServer {
    * @param string buf Request Header.
    * @return array data Daten eines Frames als Array.
    */
-  function deframe($frame) {
+  function deframe(&$user, $frame) {
     $header = $this->getHeaderOfFrame($frame);
     $payload = substr($frame, 6, $header["length"]); //length > 126 !
     $payload = $this->xorStr($payload, $header["mask"]);
+
     //Header Verarbeiten 
     //check rsv in Header todo 
     if (ord($header['rsv1']) + ord($header['rsv2']) + ord($header['rsv3']) > 0) {
@@ -314,7 +315,7 @@ abstract class websocketServer {
         break;
       case 8:
         // todo: close the connection
-        echo "\nCLOSE CONN opcode 8!";
+        echo "\nCLOSE CONN opcode 8!"; //todo //!
         return "";
       case 9: //is ping frame
         //send pong frame w/ exact same payload data as ping frame 
@@ -334,7 +335,35 @@ abstract class websocketServer {
     echo "\npayload: " .$payload;
     echo "\nopcode: ". $header["opcode"];
 
+    //mutiple Frames Handling | Frame > 2048 bits
+    if ($user->multipleFrames) {
+      $frame = $user->partialBuffer . $frame;
+      $user->multipleFrames = false;
+      return $this->deframe($user, $frame);
+    }
 
+    //extrahierte Daten vorranstellen
+    $payload = $user->partialMsg . $payload;
+
+    //solange länger
+    if ($header['length'] > strlen($this->xorStr($payload, $header["mask"]))) {
+      echo "\nmultiple Frames:";
+      $user->multipleFrames = true;
+      $user->partialBuffer = $frame;
+      return false;
+    }
+
+    $payload = $this->xorStr($payload, $header["mask"]);
+
+    if ($header['fin']) {
+      $user->partialMgs = "";
+      return $payload;
+    }
+
+    $user->partialMsg = $payload;
+    return false;
+    
+    //dec.
     $data["payload"] = $payload;
     $data["header"] = $header;
 
