@@ -169,7 +169,7 @@ class DBCnc {
    */
   public function sqlSelectOneRow(string $select, int $start = 0) : array {
     $resp = $this->sqlSelectAssoc($select, $start, 1);
-    if (count($resp) > 0) return $resp[0];
+    if (count($resp) > 0) return is_array($resp[0]) ? $resp[0] : [$resp[0]];
     else return [];
   }
 }
