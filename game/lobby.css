@@ -1,19 +1,7 @@
-/* Tabellen Nummer */
-table {
-  counter-reset: rowNumber;
-  font: bold Helvetica, Arial, sans-serif;
+.blur{
   backdrop-filter: blur(10px);
-  /* background-color: rgba(0,0,0,0.5); */
+  border: rgba(95, 95, 95, 0.15) 5px solid;
 }
-  
-table tbody tr::before {
-  display: table-cell;
-  counter-increment: rowNumber;
-  content: counter(rowNumber) ".";
-  padding-right: 0.3em;
-  text-align: right;
-}
-
-.table{
-  color: white;
+.farbe {
+  display: none;
 }

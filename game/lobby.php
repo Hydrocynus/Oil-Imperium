@@ -1,49 +1,69 @@
 <?php
-  set_include_path("../");
-  require_once("php/default-html-head.php");
-  require_once("php/Utils.php");
+set_include_path("../");
+require_once("php/default-html-head.php");
+require_once("php/Utils.php");
 ?>
 <link rel="stylesheet" href="lobby.css">
 <link rel="stylesheet" href="../home/home.css">
+<script src="lobby.js" defer></script>
 </head>
 
 <body>
-<div id="background">
+  <div id="background">
     <!-- Mask-->
     <div class="mask d-flex align-items-center justify-content-center">
       <!-- Container -->
       <div class="container text-white text-center">
         <h1 class="text-white">Lobby</h1>
-        <h6 class="text-uppercase text-white">—&nbsp&nbsp Spielcode: Code &nbsp&nbsp—</h6>
+        <h6 class="text-uppercase text-white">—&nbsp&nbsp Spielcode: <span id="code">----</span> &nbsp&nbsp—</h6>
         <!-- form -->
         <form class="row-12" action="" method="get">
-          <table class="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">  </th>
-              <th scope="col">Name</th>
-              <th scope="col">Color</th>
-              <th scope="col">Bereit</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><input type="text" value="Player"></td>
-              <td><input type="color" value="#ff0000"></td>
-              <td><input type="checkbox"></td>
-            </tr>
-            <tr>
-              <td><input type="text" value="Ich" readonly></td>
-              <td><input type="color" value="#ff9900" disabled></td>
-              <td><input type="checkbox" checked disabled></td>
-            </tr>
-            <tr>
-              <td><input type="text" value="Son Typ" readonly></td>
-              <td><input type="color" value="#00ffff" disabled></td>
-              <td><input type="checkbox" disabled></td>
-            </tr>
-          </tbody>
-        </table>
+
+          <!-- conatiner -->
+          <div class="container">
+            <div class="row">&nbsp;</div>
+            <!-- Eigende Spieler anpassungen -->
+            <div class="row">
+              <div class="col">Name:<input type="text" value="Player"></div>
+              <div class="col">Farbe: <label for="farbe" style="width: 50px;height: 20px; background-color: black"></label><input id="farbe" type="color" value="Player" visible="false" onchange="colorchange(this)" style="display:none"></div>
+              <div class="col">Bereit:<input id="checkbox" type="checkbox"></div>
+
+            </div>
+            <!-- Eigende Spieler anpassungen -->
+            <div class="row">&nbsp;</div>
+            <!-- blur -->
+            <div class="blur">
+              <!-- Alle verfügbaren Spieler -->
+              <div class="row">
+                <div class="col"> </div>
+              </div>
+              <div class="row" style="border-bottom: rgba(95, 95, 95, 0.15) 5px solid;">
+                <div class="col">
+                  Spieler in der Lobby:
+                </div>
+              </div>
+              <!-- Alle verfügbaren Spieler -->
+
+              <!-- Tabellen Inhalt -->
+              <div class="row">
+                <div class="col">hier spieler db schrift farbe</div>
+                <div class="col">status</div>
+              </div>
+
+              <div class="row">
+                <div class="col">hier spieler db schrift farbe</div>
+                <div class="col">status</div>
+              </div>
+              <div class="row">
+                <div class="col">hier spieler db schrift farbe</div>
+                <div class="col">status</div>
+              </div>
+
+              <!-- Tabellen Inhalt -->
+            </div>
+            <!-- blur -->
+          </div>
+          <!-- conatiner -->
         </form>
         <!-- form -->
       </div>
@@ -53,4 +73,5 @@
   </div>
   <!-- Full Page Intro -->
 </body>
+
 </html>
