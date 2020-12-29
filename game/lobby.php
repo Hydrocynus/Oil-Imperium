@@ -5,6 +5,7 @@ require_once("php/Utils.php");
 ?>
 <link rel="stylesheet" href="lobby.css">
 <link rel="stylesheet" href="../home/home.css">
+<script src="lobby.js" defer></script>
 </head>
 
 <body>
@@ -14,27 +15,29 @@ require_once("php/Utils.php");
       <!-- Container -->
       <div class="container text-white text-center">
         <h1 class="text-white">Lobby</h1>
-        <h6 class="text-uppercase text-white">—&nbsp&nbsp Spielcode: <?php echo "Code" ?> &nbsp&nbsp—</h6>
+        <h6 class="text-uppercase text-white">—&nbsp&nbsp Spielcode: <span id="code">----</span> &nbsp&nbsp—</h6>
         <!-- form -->
         <form class="row-12" action="" method="get">
 
           <!-- conatiner -->
           <div class="container">
+            <div class="row">&nbsp;</div>
             <!-- Eigende Spieler anpassungen -->
             <div class="row">
               <div class="col">Name:<input type="text" value="Player"></div>
-              <div class="col">Farbe:<input type="color" value="Player"></div>
-              <div class="col">Bereit:<input type="checkbox"></div>
+              <div class="col">Farbe: <label for="farbe" style="width: 50px;height: 20px; background-color: black"></label><input id="farbe" type="color" value="Player" visible="false" onchange="colorchange(this)" style="display:none"></div>
+              <div class="col">Bereit:<input id="checkbox" type="checkbox"></div>
+
             </div>
             <!-- Eigende Spieler anpassungen -->
-
+            <div class="row">&nbsp;</div>
             <!-- blur -->
             <div class="blur">
               <!-- Alle verfügbaren Spieler -->
               <div class="row">
                 <div class="col"> </div>
               </div>
-              <div class="row">
+              <div class="row" style="border-bottom: rgba(95, 95, 95, 0.15) 5px solid;">
                 <div class="col">
                   Spieler in der Lobby:
                 </div>
@@ -45,10 +48,17 @@ require_once("php/Utils.php");
               <div class="row">
                 <div class="col">hier spieler db schrift farbe</div>
                 <div class="col">status</div>
-                <div class="w-100"></div>
+              </div>
+
+              <div class="row">
                 <div class="col">hier spieler db schrift farbe</div>
                 <div class="col">status</div>
               </div>
+              <div class="row">
+                <div class="col">hier spieler db schrift farbe</div>
+                <div class="col">status</div>
+              </div>
+
               <!-- Tabellen Inhalt -->
             </div>
             <!-- blur -->
