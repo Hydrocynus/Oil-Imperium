@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Erstellungszeit: 02. Dez 2020 um 17:02
+-- Erstellungszeit: 02. Dez 2020 um 15:12
 -- Server-Version: 10.4.16-MariaDB
 -- PHP-Version: 7.4.12
 
@@ -20,6 +20,7 @@ SET time_zone = "+00:00";
 --
 -- Datenbank: `barrel`
 --
+CREATE DATABASE IF NOT EXISTS `barrel` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE `barrel`;
 
 -- --------------------------------------------------------
@@ -29,11 +30,11 @@ USE `barrel`;
 --
 
 CREATE TABLE IF NOT EXISTS `spiel` (
-  `SpielCode` char(4) NOT NULL,
+  `SpielID` int(11) NOT NULL AUTO_INCREMENT,
   `IP` varchar(15) NOT NULL,
-  `Port` int NOT NULL,
+  `Port` int(11) NOT NULL,
   `Letzte_Aenderung` date DEFAULT NULL,
-  PRIMARY KEY (`SpielCode`)
+  PRIMARY KEY (`SpielID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 COMMIT;
 

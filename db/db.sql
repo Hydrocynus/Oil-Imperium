@@ -21,21 +21,6 @@ SET time_zone = "+00:00";
 -- Datenbank: `barrel`
 --
 CREATE DATABASE IF NOT EXISTS `barrel` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE `barrel`;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `spiel`
---
-
-CREATE TABLE IF NOT EXISTS `spiel` (
-  `SpielID` int(11) NOT NULL AUTO_INCREMENT,
-  `IP` varchar(15) NOT NULL,
-  `Port` int(11) NOT NULL,
-  `Letzte_Aenderung` date DEFAULT NULL,
-  PRIMARY KEY (`SpielID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
