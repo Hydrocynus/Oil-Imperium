@@ -17,7 +17,7 @@ class DBCnc {
    * @param int $fetch_style Art der Rueckgabe. Siehe hierzu Dekumentation von PDO::fetch.
    * @param int $start (Optional) Startzeile der Abfrage. (Standard: 1. Zeile)
    * @param null|int $length (Optional) Anzahl Zeilen in der Abfrage. (Wenn ausgelassen, werden alle Zeilen zurueckgegeben.)
-   * @return string|array Ausgabe der Datenbank.
+   * @return array Ausgabe der Datenbank.
    */
   private function sqlSelect(string $sql, int $fetch_style = PDO::FETCH_BOTH, int $start = 0, $length = null) {
     if ($length == 0) return [];
@@ -27,14 +27,10 @@ class DBCnc {
 
     $resp = $stmt->fetchAll($fetch_style);
 
-    if (is_string($resp)) {
-      return $resp;
-    }
-    if (is_array($resp)) {
+    if (!is_array($resp)) {
+      return [$resp];
+    } else {
       return array_slice($resp, $start, $length);
-    }
-    else {
-      return json_encode($resp);
     }
   }
 
