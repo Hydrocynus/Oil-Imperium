@@ -1,0 +1,1 @@
+d3.select("#code").text(localStorage.getItem("code") || "----");
