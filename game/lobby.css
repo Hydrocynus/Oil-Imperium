@@ -1,19 +1,11 @@
-/* Tabellen Nummer */
-table {
-  counter-reset: rowNumber;
-  font: bold Helvetica, Arial, sans-serif;
-  backdrop-filter: blur(10px);
-  /* background-color: rgba(0,0,0,0.5); */
-}
-  
-table tbody tr::before {
-  display: table-cell;
-  counter-increment: rowNumber;
-  content: counter(rowNumber) ".";
-  padding-right: 0.3em;
-  text-align: right;
-}
+.blur{backdrop-filter: blur(10px);}
 
-.table{
-  color: white;
+#checkit2 + label span{
+  background-image: url(https://www.mediaevent.de/html/svg/ui-checkbox-e.svg);
+  vertical-align: middle;
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+  margin-right: 12px;
+  cursor: pointer;
 }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3307
--- Erstellungszeit: 29. Dez 2020 um 15:55
+-- Erstellungszeit: 29. Dez 2020 um 15:54
 -- Server-Version: 10.4.14-MariaDB
 -- PHP-Version: 7.4.11
 
@@ -24,19 +24,6 @@ USE `barrel`;
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `spiel`
---
-
-CREATE TABLE `spiel` (
-  `SpielID` int(11) NOT NULL,
-  `IP` varchar(15) NOT NULL,
-  `Port` int(11) NOT NULL,
-  `Letzte_Aenderung` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
 -- Tabellenstruktur für Tabelle `spieler`
 --
 
@@ -46,26 +33,6 @@ CREATE TABLE `spieler` (
   `geld` int(11) NOT NULL,
   `kredite_gemacht` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Indizes der exportierten Tabellen
---
-
---
--- Indizes für die Tabelle `spiel`
---
-ALTER TABLE `spiel`
-  ADD PRIMARY KEY (`SpielID`);
-
---
--- AUTO_INCREMENT für exportierte Tabellen
---
-
---
--- AUTO_INCREMENT für Tabelle `spiel`
---
-ALTER TABLE `spiel`
-  MODIFY `SpielID` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
