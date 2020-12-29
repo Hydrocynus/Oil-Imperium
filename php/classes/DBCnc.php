@@ -1,17 +1,31 @@
 <?php
+require_once('Utils.php');
 class DBCnc {
   private $DB;
 
+  /**
+   * Konstruktor der Datenbankverbindung.
+   * Liest aus der Datei db.conf die Verbindungsinformationen.
+   * @author Tobias
+   * @version 29.12.2020
+   * @since 02.12.2020
+   * @return void
+   */
   public function __construct()
   {
-    $dsn = 'mysql:host=localhost;dbname=barrel';
+    $config = loadConfig('../db.conf');
+    $host   = $config['ip'];
+    $port   = $config['port'];
+    $dbname = $config['db'];
+
+    $dsn = "mysql:host=$host;port=$port;dbname=$dbname";
     $this->DB = new PDO($dsn, 'root');
   }
 
   /**
    * Fuehrt einen SQL Befehl aus und gibt das Ergebnis zurueck.
    * @author Tobias
-   * @version 02.12.2020
+   * @version 29.12.2020
    * @since 02.12.2020
    * @param string $sql SQL-String.
    * @param int $fetch_style Art der Rueckgabe. Siehe hierzu Dekumentation von PDO::fetch.
@@ -19,7 +33,7 @@ class DBCnc {
    * @param null|int $length (Optional) Anzahl Zeilen in der Abfrage. (Wenn ausgelassen, werden alle Zeilen zurueckgegeben.)
    * @return array Ausgabe der Datenbank.
    */
-  private function sqlSelect(string $sql, int $fetch_style = PDO::FETCH_BOTH, int $start = 0, $length = null) {
+  private function sqlSelect(string $sql, int $fetch_style = PDO::FETCH_BOTH, int $start = 0, $length = null) : array {
     if ($length == 0) return [];
 
     $stmt = $this->DB->query($sql);
