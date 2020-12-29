@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3307
--- Erstellungszeit: 29. Dez 2020 um 15:55
+-- Erstellungszeit: 29. Dez 2020 um 18:11
 -- Server-Version: 10.4.14-MariaDB
 -- PHP-Version: 7.4.11
 
@@ -20,7 +20,9 @@ SET time_zone = "+00:00";
 --
 -- Datenbank: `barrel`
 --
+CREATE DATABASE IF NOT EXISTS `barrel` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE `barrel`;
+
 -- --------------------------------------------------------
 
 --
