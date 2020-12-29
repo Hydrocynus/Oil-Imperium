@@ -1,0 +1,18 @@
+
+* {
+  font-family: Arial;
+  }
+  
+.box {
+  border: 2px solid black;
+  border-radius: 8px;
+  margin: 1em;
+ }
+
+ .inp {
+   color: Green; 
+ }
+ 
+ .srv {
+   color: #ffbb11;
+ }
