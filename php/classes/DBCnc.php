@@ -37,7 +37,7 @@ class DBCnc {
     if ($length == 0) return [];
 
     $stmt = $this->DB->query($sql);
-    if (!$stmt) return false;
+    if (!$stmt) return [false];
 
     $resp = $stmt->fetchAll($fetch_style);
 
