@@ -78,3 +78,23 @@ function generateRandomString(int $length, int $type) : string {
 
   return $string;
 }
+
+/**
+ * Laed eine Datei Zeilenweise und trennt Zeilen an Doppelpunkten in ein assoziatives Array.
+ * @author Tobias
+ * @version 29.12.2020
+ * @since 29.12.2020
+ * @param string $path Pfad zur Datei.
+ * @return array Assoziatives Arrays (Erster Eintrag einer Zeile in der Datei ist Schluessel, der Rest ist Wert).
+ */
+function loadConfig(string $path) {
+  $file   = file($path);
+  $config = [];
+  foreach ($file as $line) {
+    if (empty(trim($line))) continue;
+    $line             = explode(":", $line, 2);
+    $line             = array_map('trim', $line);
+    $config[$line[0]] = $line[1];
+  }
+  return $config;
+}
