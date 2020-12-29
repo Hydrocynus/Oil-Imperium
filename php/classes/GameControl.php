@@ -135,7 +135,7 @@ class GameControl extends Barrel {
   /**
    * Leitet zur Lobby eines Spielcodes weiter.
    * @author Tobias
-   * @version 27.12.2020
+   * @version 29.12.2020 (LocalStorage fuer Spielderdaten.)
    * @since 27.12.2020
    * @param string $code Spielcode.
    * @return void
@@ -153,6 +153,7 @@ class GameControl extends Barrel {
                 localStorage.setItem('code', '$code');
                 localStorage.setItem('ip',   '$ip');
                 localStorage.setItem('port', '$port');
+                if (!localStorage.getItem('$code')) localStorage.setItem('$code', '{}');
                 location = '../game/lobby.php';
               </script>";
     echo $script;
