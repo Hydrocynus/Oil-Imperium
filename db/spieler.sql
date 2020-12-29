@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3307
--- Erstellungszeit: 29. Dez 2020 um 15:54
+-- Erstellungszeit: 29. Dez 2020 um 18:38
 -- Server-Version: 10.4.14-MariaDB
 -- PHP-Version: 7.4.11
 
@@ -20,7 +20,7 @@ SET time_zone = "+00:00";
 --
 -- Datenbank: `barrel`
 --
-USE `barrel`;
+
 -- --------------------------------------------------------
 
 --
@@ -28,10 +28,12 @@ USE `barrel`;
 --
 
 CREATE TABLE `spieler` (
-  `farbe` text NOT NULL,
-  `name` text NOT NULL,
+  `farbe` varchar(10) NOT NULL,
+  `name` varchar(100) NOT NULL,
   `geld` int(11) NOT NULL,
-  `kredite_gemacht` int(11) NOT NULL
+  `kredite_gemacht` int(11) NOT NULL,
+  `ID` int(11) NOT NULL,
+  `SpielID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 COMMIT;
 
