@@ -30,7 +30,7 @@ USE `barrel`;
 --
 
 CREATE TABLE IF NOT EXISTS `spiel` (
-  `SpielID` int(11) NOT NULL,
+  `SpielCode` int(11) NOT NULL,
   `IP` varchar(15) NOT NULL,
   `Port` int(11) NOT NULL,
   `Letzte_Aenderung` date DEFAULT NULL
@@ -57,17 +57,8 @@ CREATE TABLE IF NOT EXISTS `spieler` (
 -- Indizes für die Tabelle `spiel`
 --
 ALTER TABLE `spiel`
-  ADD PRIMARY KEY (`SpielID`);
+  ADD PRIMARY KEY (`SpielCode`);
 
---
--- AUTO_INCREMENT für exportierte Tabellen
---
-
---
--- AUTO_INCREMENT für Tabelle `spiel`
---
-ALTER TABLE `spiel`
-  MODIFY `SpielID` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
