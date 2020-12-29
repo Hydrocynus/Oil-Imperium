@@ -30,7 +30,7 @@ USE `barrel`;
 --
 
 CREATE TABLE IF NOT EXISTS `spiel` (
-  `SpielCode` int(11) NOT NULL,
+  `SpielCode` char(4) NOT NULL,
   `IP` varchar(15) NOT NULL,
   `Port` int(11) NOT NULL,
   `Letzte_Aenderung` date DEFAULT NULL
