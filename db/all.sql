@@ -29,7 +29,7 @@ USE `barrel`;
 -- Tabellenstruktur für Tabelle `spiel`
 --
 
-CREATE TABLE `spiel` (
+CREATE TABLE IF NOT EXISTS `spiel` (
   `SpielID` int(11) NOT NULL,
   `IP` varchar(15) NOT NULL,
   `Port` int(11) NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE `spiel` (
 -- Tabellenstruktur für Tabelle `spieler`
 --
 
-CREATE TABLE `spieler` (
+CREATE TABLE IF NOT EXISTS `spieler` (
   `farbe` text NOT NULL,
   `name` text NOT NULL,
   `geld` int(11) NOT NULL,
