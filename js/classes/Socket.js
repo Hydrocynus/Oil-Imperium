@@ -1,18 +1,18 @@
 /**
- * 
+ * Klasse für WebSocket Verbindungen
  * @author Tobias
  * @version 03.01.2021
  * @since 29.12.2020
  */
 class Socket {
   /**
-   * 
+   * Erstellt neue WebSocket Verbindung.
    * @author Tim Tobias
    * @version 03.01.2021
    * @since 29.12.2020
-   * @param {Number|String} host 
-   * @param {Number|String} port 
-   * @returns 
+   * @param {Number|String} host Adresse des WebSockets.
+   * @param {Number|String} port Port des Websockets.
+   * @returns {void}
    */
   constructor(host, port) {
     this.host = host;
@@ -23,11 +23,12 @@ class Socket {
   }
 
   /**
-   * 
+   * Oeffnet eine neue WebSocket Verbindung.
+   * Versucht den WebSocket Server zu starten, wenn keine Verbindung moeglich ist.
    * @author Tobias
    * @version 03.01.2021
    * @since 03.01.2021
-   * @param {String} url 
+   * @param {String} url URL des WebSockets.
    * @returns {void}
    */
   openWebSocket(url) {
@@ -43,11 +44,11 @@ class Socket {
   }
 
   /**
-   * 
+   * Sendet eine Nachricht ueber den WebSocket.
    * @author Tim Tobias
    * @version 03.01.2021
    * @since 08.12.2020
-   * @param {String} msg 
+   * @param {String} msg Nachricht.
    * @returns {void}
    */
   send(msg) {
@@ -55,12 +56,12 @@ class Socket {
   }
 
   /**
-   * 
+   * Startet einen WebSocket Server.
    * @author Tobias
    * @version 03.01.2021
    * @since 29.12.2020
-   * @param {Number|String} [host] 
-   * @param {Number|String} [port] 
+   * @param {Number|String} [host] Adresse des Servers. Standardmaessig wird das Objektattribut 'host' verwendet.
+   * @param {Number|String} [port] Port des Servers. Standardmaessig wird das Objektattribut 'port' verwendet.
    * @returns {void}
    */
   async startWebSocket(host = this.host, port = this.port) {
