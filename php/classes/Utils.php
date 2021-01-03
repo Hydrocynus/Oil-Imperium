@@ -99,4 +99,52 @@ class Utils {
     }
     return $config;
   }
+
+  /** 
+   * XOR-Verknüpfung von zwei Strings.
+   * Passt die länge der Maskierung an die Länge des Payloads an.
+   * @author Tim
+   * @version 08.12.2020 
+   * @since 03.01.2021 
+   * @param string payload Zu Verknüpende Folge
+   * @param string mask Maskierung
+   * @return string xor-verknüpfter String
+   */
+  function xorStr($payload, $mask) {
+    $maskstr = "";
+    
+    while (strlen($maskstr) < strlen($payload)) {
+      $maskstr .= $mask;
+    }
+    while (strlen($maskstr) > strlen($payload)) {
+      $maskstr = substr($maskstr,0,-1);
+    }
+
+    return $maskstr ^ $payload;
+
+  }
+
+  /**  
+   * Zeigt ein Frame leserlich in Binär an.
+   * Für debuggung der Frames.
+   * @author Tim
+   * @version 08.12.2020 
+   * @since 03.01.2021 
+   * @param string frame welches Binär dargestellt werden soll
+   * @return string binäre Darstellung eines Frames 
+   */
+  function getBinOfFrame($frame) {
+    $bin = "";
+    for ($i=0; $i < strlen($frame); $i ++ ) {
+        $byte = substr($frame, $i);
+        $byte = decbin(ord($byte));
+        $zero = "";
+    
+        for ($j=strlen($byte); $j<8; $j++) {
+            $zero .= "0". $zero;
+        }
+        $bin .= $zero . $byte;
+    }
+    return $bin;
+  }
 }

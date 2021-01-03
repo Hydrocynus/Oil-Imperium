@@ -1,4 +1,7 @@
 <?php 
+require_once("./logHandler.php");//!Testing
+require_once('Utils.php');
+
 abstract class Socket {
   protected $users = [];
   protected $sockets = []; // Über Client aufrufen
@@ -40,7 +43,7 @@ abstract class Socket {
    * -disconnections
    * @author Tim
    * @version 03.12.2020 
-   * @since XX.12.2020
+   * @since 03.12.2020
    */
   function start() {
     echo "\n\n\n\n------------------------------------------------------------";
@@ -84,9 +87,7 @@ abstract class Socket {
               //recieve Data 
               echo "\nbuf: ".$buf;
               $data = $this->deframe($u, $buf);
-              //$this->send($u, $data["pl"]);
-              // echo "\n Selected User: ". $u->id;
-              // $this->read($u, $buf) //!
+              $this->broadcast($data["payload"]);
             }
           }
         }
@@ -94,13 +95,13 @@ abstract class Socket {
     }
   }
 
-  /**
+  /** @todo user bereits vorhanden prüfen
    * Wird aufgerufen wenn ein Client ein handshake request sendet.
    * Legt neuen User im users-Array an.
    * Legt neuen socket im socket-Array an: //!
    * @author Tim
    * @version 03.12.2020 
-   * @since XX.12.2020
+   * @since 03.12.2020
    * @param object Socket Object das sich mit dem master-Socket Verbindet. 
    */
   function connect($socket) {
@@ -109,13 +110,13 @@ abstract class Socket {
     $this->sockets[$newUser->id] = $socket;
   }
 
-  /**
+  /** @todo del User | disconn trennen
    * Entfernt User aus users Array an.
    * Entfernt Socket aus Socket Array an: //!
    * schliesst socket
    * @author Tim
    * @version 03.12.2020 
-   * @since XX.12.2020
+   * @since 03.12.2020
    * @param object Socket Object das sich mit dem master-Socket Verbindet. 
    */
   function disconnect($socket) {
@@ -141,7 +142,7 @@ abstract class Socket {
    * => Websocketverbindung aufgebaut.
    * @author Tim
    * @version 03.12.2020 
-   * @since XX.12.2020
+   * @since 03.12.2020
    * @param object user User, welcher sich Verbinden will.
    * @param string buf Request Header.
    */
@@ -368,56 +369,107 @@ abstract class Socket {
     return $data;
   }
 
+  //!
+  function frame($message, $messageType='text', $messageContinues=false) {
+    switch ($messageType) {
+      case 'continuous':
+        $b1 = 0;
+        break;
+      case 'text':
+        $b1 = 1;
+        break;
+      case 'binary':
+        $b1 = 2;
+        break;
+      case 'close':
+        $b1 = 8;
+        break;
+      case 'ping':
+        $b1 = 9;
+        break;
+      case 'pong':
+        $b1 = 10;
+        break;
+    }
+    if ($messageContinues) {
+    } 
+    else {
+      $b1 += 128;
+    }
+    var_dump($message);
+    $length = strlen($message);
+    $lengthField = "";
+    if ($length < 126) {
+      $b2 = $length;
+    } 
+    elseif ($length < 65536) {
+      $b2 = 126;
+      $hexLength = dechex($length);
+      //$this->stdout("Hex Length: $hexLength");
+      if (strlen($hexLength)%2 == 1) {
+        $hexLength = '0' . $hexLength;
+      } 
+      $n = strlen($hexLength) - 2;
+
+      for ($i = $n; $i >= 0; $i=$i-2) {
+        $lengthField = chr(hexdec(substr($hexLength, $i, 2))) . $lengthField;
+      }
+      while (strlen($lengthField) < 2) {
+        $lengthField = chr(0) . $lengthField;
+      }
+    } 
+    else {
+      $b2 = 127;
+      $hexLength = dechex($length);
+      if (strlen($hexLength)%2 == 1) {
+        $hexLength = '0' . $hexLength;
+      } 
+      $n = strlen($hexLength) - 2;
+
+      for ($i = $n; $i >= 0; $i=$i-2) {
+        $lengthField = chr(hexdec(substr($hexLength, $i, 2))) . $lengthField;
+      }
+      while (strlen($lengthField) < 8) {
+        $lengthField = chr(0) . $lengthField;
+      }
+    }
+
+    return chr($b1) . chr($b2) . $lengthField . $message;
+  }
+
   /**
    * Sendet etwas an einen User oder
    * schreibt alternativ die nachrricht in den Storage,
    * falls dieser momentan nicht Conneted ist.
    * @author Tim
    * @version 08.12.2020 
-   * @since XX.12.2020
+   * @since 03.01.2021 
    * @param object user Object.
    * @param string msg zu Versendende Nachrricht.
    */
   function send($user, $msg) {
     if ($user->handshake) {
-      //!$msg = $this->frame($msg, $user);
-      socket_write($user->socket, $msg, strlen($msg));
-    } else {
-      $this->storage[] = ["user" => $user, "msg" => $msg];
+      $frame = $this->frame($msg);
+      socket_write($user->socket, $frame, strlen($frame));
+      echo "\nsend sth to user";
+    } else { //! storage system überarbeiten
+      $this->storage[] += ["user" => $user, "msg" => $msg];
     }
   }
 
-  //todo send 
-  //-an alle
-  //-an ausgewählte
-
-  /**utils
-   * XOR-Verknüpfung von zwei Strings.
-   * Passt die länge der Maskierung an die Länge des Payloads an.
+  /**
+   * Sendet etwas an alle User,
+   * welche mit den Master-Socket in verbindung stehen.
    * @author Tim
-   * @version 08.12.2020 
-   * @since XX.12.2020
-   * @param string payload Zu Verknüpende Folge
-   * @param string mask Maskierung
-   * @return string xor-verknüpfter String
+   * @version 03.01.2021 
+   * @since 03.01.2021 
+   * @param string msg Nachrricht.
    */
-  function xorStr($payload, $mask) {
-    $maskstr = "";
-    
-    while (strlen($maskstr) < strlen($payload)) {
-      $maskstr .= $mask;
+  function broadcast($msg) {
+    foreach ($this->users as $user) {
+      $this->send($user, $msg);
     }
-    while (strlen($maskstr) > strlen($payload)) {
-      $maskstr = substr($maskstr,0,-1);
-    }
-
-    return $maskstr ^ $payload;
-
   }
   
-  //? 
-  function frame() {
-
-  }
 
 }
