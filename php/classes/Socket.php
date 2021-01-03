@@ -1,5 +1,5 @@
 <?php 
-abstract class WebSocket {
+abstract class Socket {
   protected $users = [];
   protected $sockets = []; // Über Client aufrufen
   protected $master;
@@ -104,7 +104,7 @@ abstract class WebSocket {
    * @param object Socket Object das sich mit dem master-Socket Verbindet. 
    */
   function connect($socket) {
-    $newUser = new WebSocketClient(uniqid(), $socket);
+    $newUser = new SocketClient(uniqid(), $socket);
     $this->users[$newUser->id] = $newUser;
     $this->sockets[$newUser->id] = $socket;
   }

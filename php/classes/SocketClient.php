@@ -1,5 +1,5 @@
 <?php 
-class WebSocketClient {
+class SocketClient {
 
   public $socket;
   public $id;

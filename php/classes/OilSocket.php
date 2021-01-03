@@ -1,5 +1,5 @@
 <?php
-class OilSocket extends WebSocket {
+class OilSocket extends Socket {
   function __construct($addr, $port) {
     parent::__construct($addr, $port);
   }
