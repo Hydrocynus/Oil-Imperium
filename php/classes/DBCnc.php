@@ -1,5 +1,4 @@
 <?php
-require_once('Utils.php');
 class DBCnc {
   private $DB;
 
@@ -7,13 +6,13 @@ class DBCnc {
    * Konstruktor der Datenbankverbindung.
    * Liest aus der Datei db.conf die Verbindungsinformationen.
    * @author Tobias
-   * @version 29.12.2020
+   * @version 03.01.2020
    * @since 02.12.2020
    * @return void
    */
   public function __construct()
   {
-    $config = loadConfig('../db.conf');
+    $config = Utils::loadConfig('../db.conf');
     $host   = $config['ip'];
     $port   = $config['port'];
     $dbname = $config['db'];

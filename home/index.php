@@ -2,22 +2,21 @@
  - Startseite des Spiels.
  - Zeigt und behandelt Spielerstellung und Spielbeitritt.
  - @author Jannis Tim Tobias
- - @version 29.11.2020 (Tobias: Bugfix - flascher Include-Path.)
+ - @version 03.01.2021
  - @since 25.11.2020
 -->
 <?php
   set_include_path("../php/");
   require_once("default-html-head.php");
-  require_once("Utils.php");
   spl_autoload_register(function ($class) { require_once("classes/$class.php"); });
 
   $barrel = new GameControl();
 
-  $btnCreate = createButton('action', 'create', 'Spiel erstellen');
-  $btnShowInput = createButton('action', 'code', 'Spiel beitreten');
-  $inpJoin = createInput('code', '', 'CODE', 'text', null, 'autofocus oninput="checkCode(this)" maxlength="4" autocomplete="off"');
-  $btnJoin = createButton('action', 'join', '<i class="fas fa-check"></i>', "submit", null, 'disabled');
-  $btnHome = createButton('', '', '<i class="fas fa-home"></i>', "button", null, 'onclick="d3.select(\'form\').node().submit()"');
+  $btnCreate    = Utils::createButton('action', 'create', 'Spiel erstellen');
+  $btnShowInput = Utils::createButton('action', 'code', 'Spiel beitreten');
+  $inpJoin      = Utils::createInput('code', '', 'CODE', 'text', null, 'autofocus oninput="checkCode(this)" maxlength="4" autocomplete="off"');
+  $btnJoin      = Utils::createButton('action', 'join', '<i class="fas fa-check"></i>', "submit", null, 'disabled');
+  $btnHome      = Utils::createButton('', '', '<i class="fas fa-home"></i>', "button", null, 'onclick="d3.select(\'form\').node().submit()"');
 ?>
   <link rel="stylesheet" href="home.css">
   <script src="home.js"></script>

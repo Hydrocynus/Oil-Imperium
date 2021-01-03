@@ -1,5 +1,5 @@
 <?php
-require_once('Utils.php');
+require_once('Bitmask.php');
 class GameControl extends Barrel {
   public $createGameError;
 
@@ -31,13 +31,13 @@ class GameControl extends Barrel {
    * Generiert einen neuen Spielcode.
    * Generiert nur neue Codes.
    * @author Tobias
-   * @version 02.12.2020
+   * @version 03.01.2021
    * @since 02.12.2020
    * @return string Gnerierter Code.
    */
   private function generateCode() : string {
     do {
-      $code = generateRandomString(4, OILIMP_LETTERS_UPPER_CASE);
+      $code = Utils::generateRandomString(4, OILIMP_LETTERS_UPPER_CASE);
     } while ($this->codeExists($code));
     return $code;
   }
@@ -71,13 +71,13 @@ class GameControl extends Barrel {
    * Generiert einen neuen Port fuer eine IP.
    * Generiert nur neue Ports.
    * @author Tobias
-   * @version 27.12.2020
+   * @version 03.01.2021
    * @since 27.12.2020
    * @return string Gnerierter Port.
    */
   private function generatePort(string $ip) : string {
     do {
-      $port = generateRandomString(5, OILIMP_NUMBERS);
+      $port = Utils::generateRandomString(5, OILIMP_NUMBERS);
     } while (!$this->portInRange($port) || !$this->portAvailable($port, $ip) || $this->portExists($port, $ip));
     return $port;
   }
