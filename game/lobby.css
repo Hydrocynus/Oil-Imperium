@@ -1,7 +1,38 @@
+/* Tabellenhintergrund aendern */
 .blur{
   backdrop-filter: blur(10px);
   border: rgba(95, 95, 95, 0.15) 5px solid;
 }
-.farbe {
+
+
+label[for="farbe"]{
+  width: 100px;
+  height: 40px;
+  background-color: black;
+  margin-bottom: -15px
+}
+
+/* Veraenderung des Bereit Buttons */
+/* Ausblaenden der Checkbox */
+#confirm{
   display: none;
+}
+
+/* Eigende Gestaltung der Checkbox */
+input[type=checkbox]+label[for="confirm"]::before{
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid #858585;
+  background-color: rgba(255, 255, 255, 0);
+  display: block;
+  float: right;
+  margin-left: 5px;
+  content: "";
+}
+
+input[type=checkbox]:checked+label[for="confirm"]::before{
+  content: "\2714";
+  display: unset;
+  font-weight: bold;
 }

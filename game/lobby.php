@@ -29,10 +29,10 @@ spl_autoload_register(function ($class) { require_once("classes/$class.php"); })
             <div class="row">
               <div class="col">Name:<input type="text" value="Player"></div>
               <div class="col">Farbe:
-                <label for="farbe" style="width: 100px;height: 40px; background-color: black; margin-bottom: -15px"></label>
+                <label for="farbe"></label>
                 <input id="farbe" type="color" value="Player" visible="false" onchange="colorchange(this)" style="display:none">
               </div>
-              <div class="col">Bereit:<input id="checkbox" type="checkbox"></div>
+              <div class="col"><input id="confirm" type="checkbox"/><label for="confirm">Bereit:</label></div>
 
             </div>
             <!-- Eigende Spieler anpassungen -->

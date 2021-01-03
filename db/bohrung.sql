@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3307
--- Erstellungszeit: 03. Jan 2021 um 14:58
+-- Erstellungszeit: 03. Jan 2021 um 14:57
 -- Server-Version: 10.4.14-MariaDB
 -- PHP-Version: 7.4.11
 
@@ -24,15 +24,14 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `spieler`
+-- Tabellenstruktur für Tabelle `bohrung`
 --
 
-CREATE TABLE `spieler` (
+CREATE TABLE `bohrung` (
+  `BID` int(11) NOT NULL,
   `SpielerID` int(11) NOT NULL,
-  `farbe` varchar(100) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `geld` int(11) NOT NULL,
-  `kredite_gemacht` int(11) DEFAULT NULL,
+  `OID` int(11) NOT NULL,
+  `SID` int(11) NOT NULL,
   `SpielCode` char(4) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -41,21 +40,27 @@ CREATE TABLE `spieler` (
 --
 
 --
--- Indizes für die Tabelle `spieler`
+-- Indizes für die Tabelle `bohrung`
 --
-ALTER TABLE `spieler`
-  ADD PRIMARY KEY (`SpielerID`),
-  ADD KEY `SpielCode` (`SpielCode`);
+ALTER TABLE `bohrung`
+  ADD PRIMARY KEY (`BID`),
+  ADD KEY `SpielCode` (`SpielCode`),
+  ADD KEY `SpielerID` (`SpielerID`),
+  ADD KEY `OID` (`OID`),
+  ADD KEY `SID` (`SID`);
 
 --
 -- Constraints der exportierten Tabellen
 --
 
 --
--- Constraints der Tabelle `spieler`
+-- Constraints der Tabelle `bohrung`
 --
-ALTER TABLE `spieler`
-  ADD CONSTRAINT `spieler_ibfk_1` FOREIGN KEY (`SpielCode`) REFERENCES `spiel` (`SpielCode`);
+ALTER TABLE `bohrung`
+  ADD CONSTRAINT `bohrung_ibfk_1` FOREIGN KEY (`SpielCode`) REFERENCES `spiel` (`SpielCode`),
+  ADD CONSTRAINT `bohrung_ibfk_2` FOREIGN KEY (`SpielerID`) REFERENCES `spieler` (`SpielerID`),
+  ADD CONSTRAINT `bohrung_ibfk_3` FOREIGN KEY (`OID`) REFERENCES `oelfeld` (`OID`),
+  ADD CONSTRAINT `bohrung_ibfk_4` FOREIGN KEY (`SID`) REFERENCES `bohrstatus` (`SID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
