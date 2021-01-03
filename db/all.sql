@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3307
--- Erstellungszeit: 29. Dez 2020 um 18:11
+-- Erstellungszeit: 29. Dez 2020 um 18:39
 -- Server-Version: 10.4.14-MariaDB
 -- PHP-Version: 7.4.11
 
@@ -29,12 +29,19 @@ USE `barrel`;
 -- Tabellenstruktur für Tabelle `spiel`
 --
 
-CREATE TABLE IF NOT EXISTS `spiel` (
+CREATE TABLE `spiel` (
   `SpielCode` char(4) NOT NULL,
   `IP` varchar(15) NOT NULL,
   `Port` int(11) NOT NULL,
   `Letzte_Aenderung` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Daten für Tabelle `spiel`
+--
+
+INSERT INTO `spiel` (`SpielCode`, `IP`, `Port`, `Letzte_Aenderung`) VALUES
+('ZOYL', '192.168.2.114', 63826, NULL);
 
 -- --------------------------------------------------------
 
@@ -42,11 +49,13 @@ CREATE TABLE IF NOT EXISTS `spiel` (
 -- Tabellenstruktur für Tabelle `spieler`
 --
 
-CREATE TABLE IF NOT EXISTS `spieler` (
-  `farbe` text NOT NULL,
-  `name` text NOT NULL,
+CREATE TABLE `spieler` (
+  `farbe` varchar(10) NOT NULL,
+  `name` varchar(100) NOT NULL,
   `geld` int(11) NOT NULL,
-  `kredite_gemacht` int(11) NOT NULL
+  `kredite_gemacht` int(11) NOT NULL,
+  `ID` int(11) NOT NULL,
+  `SpielID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -58,7 +67,6 @@ CREATE TABLE IF NOT EXISTS `spieler` (
 --
 ALTER TABLE `spiel`
   ADD PRIMARY KEY (`SpielCode`);
-
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -25,7 +25,10 @@ require_once("php/Utils.php");
             <!-- Eigende Spieler anpassungen -->
             <div class="row">
               <div class="col">Name:<input type="text" value="Player"></div>
-              <div class="col">Farbe: <label for="farbe" style="width: 50px;height: 20px; background-color: black"></label><input id="farbe" type="color" value="Player" visible="false" onchange="colorchange(this)" style="display:none"></div>
+              <div class="col">Farbe:
+                <label for="farbe" style="width: 100px;height: 40px; background-color: black; margin-bottom: -15px"></label>
+                <input id="farbe" type="color" value="Player" visible="false" onchange="colorchange(this)" style="display:none">
+              </div>
               <div class="col">Bereit:<input id="checkbox" type="checkbox"></div>
 
             </div>
