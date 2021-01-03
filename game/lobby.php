@@ -1,11 +1,14 @@
 <?php
-set_include_path("../");
-require_once("php/default-html-head.php");
-require_once("php/Utils.php");
+set_include_path("../php/");
+require_once("default-html-head.php");
+spl_autoload_register(function ($class) { require_once("classes/$class.php"); });
 ?>
 <link rel="stylesheet" href="lobby.css">
 <link rel="stylesheet" href="../home/home.css">
 <script src="lobby.js" defer></script>
+<script src="../js/classes/Socket.js"></script>
+<script src="../js/classes/Xhr.js"></script>
+<script src="../js/Utils.js"></script>
 </head>
 
 <body>
