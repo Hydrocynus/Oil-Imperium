@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3307
--- Erstellungszeit: 03. Jan 2021 um 14:58
+-- Erstellungszeit: 03. Jan 2021 um 14:57
 -- Server-Version: 10.4.14-MariaDB
 -- PHP-Version: 7.4.11
 
@@ -24,16 +24,14 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `spieler`
+-- Tabellenstruktur für Tabelle `ereigniskarte`
 --
 
-CREATE TABLE `spieler` (
-  `SpielerID` int(11) NOT NULL,
-  `farbe` varchar(100) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `geld` int(11) NOT NULL,
-  `kredite_gemacht` int(11) DEFAULT NULL,
-  `SpielCode` char(4) NOT NULL
+CREATE TABLE `ereigniskarte` (
+  `EID` int(11) NOT NULL,
+  `Kategorie` varchar(100) NOT NULL,
+  `Aktion` varchar(100) NOT NULL,
+  `Text` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -41,21 +39,10 @@ CREATE TABLE `spieler` (
 --
 
 --
--- Indizes für die Tabelle `spieler`
+-- Indizes für die Tabelle `ereigniskarte`
 --
-ALTER TABLE `spieler`
-  ADD PRIMARY KEY (`SpielerID`),
-  ADD KEY `SpielCode` (`SpielCode`);
-
---
--- Constraints der exportierten Tabellen
---
-
---
--- Constraints der Tabelle `spieler`
---
-ALTER TABLE `spieler`
-  ADD CONSTRAINT `spieler_ibfk_1` FOREIGN KEY (`SpielCode`) REFERENCES `spiel` (`SpielCode`);
+ALTER TABLE `ereigniskarte`
+  ADD PRIMARY KEY (`EID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -24,15 +24,14 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `spieler`
+-- Tabellenstruktur für Tabelle `tanker`
 --
 
-CREATE TABLE `spieler` (
+CREATE TABLE `tanker` (
+  `TID` int(11) NOT NULL,
+  `Groesse` int(11) NOT NULL,
+  `PID` int(11) NOT NULL,
   `SpielerID` int(11) NOT NULL,
-  `farbe` varchar(100) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `geld` int(11) NOT NULL,
-  `kredite_gemacht` int(11) DEFAULT NULL,
   `SpielCode` char(4) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -41,21 +40,25 @@ CREATE TABLE `spieler` (
 --
 
 --
--- Indizes für die Tabelle `spieler`
+-- Indizes für die Tabelle `tanker`
 --
-ALTER TABLE `spieler`
-  ADD PRIMARY KEY (`SpielerID`),
-  ADD KEY `SpielCode` (`SpielCode`);
+ALTER TABLE `tanker`
+  ADD PRIMARY KEY (`TID`),
+  ADD KEY `SpielerID` (`SpielerID`),
+  ADD KEY `SpielCode` (`SpielCode`),
+  ADD KEY `PID` (`PID`);
 
 --
 -- Constraints der exportierten Tabellen
 --
 
 --
--- Constraints der Tabelle `spieler`
+-- Constraints der Tabelle `tanker`
 --
-ALTER TABLE `spieler`
-  ADD CONSTRAINT `spieler_ibfk_1` FOREIGN KEY (`SpielCode`) REFERENCES `spiel` (`SpielCode`);
+ALTER TABLE `tanker`
+  ADD CONSTRAINT `tanker_ibfk_1` FOREIGN KEY (`SpielerID`) REFERENCES `spieler` (`SpielerID`),
+  ADD CONSTRAINT `tanker_ibfk_2` FOREIGN KEY (`SpielCode`) REFERENCES `spiel` (`SpielCode`),
+  ADD CONSTRAINT `tanker_ibfk_3` FOREIGN KEY (`PID`) REFERENCES `position` (`PID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

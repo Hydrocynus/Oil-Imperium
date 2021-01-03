@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3307
--- Erstellungszeit: 03. Jan 2021 um 14:58
+-- Erstellungszeit: 03. Jan 2021 um 14:57
 -- Server-Version: 10.4.14-MariaDB
 -- PHP-Version: 7.4.11
 
@@ -24,15 +24,14 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `spieler`
+-- Tabellenstruktur für Tabelle `oelfeld`
 --
 
-CREATE TABLE `spieler` (
-  `SpielerID` int(11) NOT NULL,
-  `farbe` varchar(100) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `geld` int(11) NOT NULL,
-  `kredite_gemacht` int(11) DEFAULT NULL,
+CREATE TABLE `oelfeld` (
+  `OID` int(11) NOT NULL,
+  `Standort` int(11) NOT NULL,
+  `Foerderwege` int(11) NOT NULL,
+  `Bohrkosten` int(11) NOT NULL,
   `SpielCode` char(4) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -41,10 +40,11 @@ CREATE TABLE `spieler` (
 --
 
 --
--- Indizes für die Tabelle `spieler`
+-- Indizes für die Tabelle `oelfeld`
 --
-ALTER TABLE `spieler`
-  ADD PRIMARY KEY (`SpielerID`),
+ALTER TABLE `oelfeld`
+  ADD PRIMARY KEY (`OID`),
+  ADD KEY `Standort` (`Standort`),
   ADD KEY `SpielCode` (`SpielCode`);
 
 --
@@ -52,10 +52,11 @@ ALTER TABLE `spieler`
 --
 
 --
--- Constraints der Tabelle `spieler`
+-- Constraints der Tabelle `oelfeld`
 --
-ALTER TABLE `spieler`
-  ADD CONSTRAINT `spieler_ibfk_1` FOREIGN KEY (`SpielCode`) REFERENCES `spiel` (`SpielCode`);
+ALTER TABLE `oelfeld`
+  ADD CONSTRAINT `oelfeld_ibfk_1` FOREIGN KEY (`Standort`) REFERENCES `standort` (`Standort`),
+  ADD CONSTRAINT `oelfeld_ibfk_2` FOREIGN KEY (`SpielCode`) REFERENCES `spiel` (`SpielCode`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
