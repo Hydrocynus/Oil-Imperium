@@ -1,5 +1,4 @@
 /**
- * //Test Kommi Tim  // 
  * Ueberprueft den Spiel-Code waehrend der Eingabe auf syntaktische Richtigkeit.
  * Wenn noetig wird der Code sofort angepasst.
  * @author Tobias
