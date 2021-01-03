@@ -16,7 +16,7 @@ if (!$buffer_closed) closeBuffer();
  * @return void
  */
 function startWebSocket() {
-  // closeBuffer();
+  closeBuffer();
   $host = $_POST['hst'];
   $port = $_POST['prt'];
   SocketMaster::startSocket($host, $port);
