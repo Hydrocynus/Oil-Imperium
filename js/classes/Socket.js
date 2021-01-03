@@ -24,7 +24,7 @@ class Socket {
 
   /**
    * 
-   * @author Tim Tobias
+   * @author Tobias
    * @version 03.01.2021
    * @since 03.01.2021
    * @param {String} url 
@@ -40,6 +40,18 @@ class Socket {
       this.openWebSocket(url);
     }
     this.socket.onopen  = (e) => console.debug("WebSocket connected on " + url);
+  }
+
+  /**
+   * 
+   * @author Tim Tobias
+   * @version 03.01.2021
+   * @since 08.12.2020
+   * @param {String} msg 
+   * @returns {void}
+   */
+  send(msg) {
+    this.socket.send(msg);
   }
 
   /**
