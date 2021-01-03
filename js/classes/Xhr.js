@@ -1,7 +1,7 @@
 /**
  * 
  * @author Tobias
- * @version 31.12.2020
+ * @version 03.01.2021
  * @since 31.12.2020
  */
 class Xhr {
@@ -23,6 +23,13 @@ class Xhr {
    */
   static gatewayUrl = "/php/Gateway.php";
 
+  /**
+   * 
+   * @author Tobias
+   * @version 31.12.2020
+   * @since 31.12.2020
+   * @type {String}
+   */
   static getGatewayUrlFromRoot() {
     return this.rootPath + this.gatewayUrl;
   }
@@ -37,7 +44,6 @@ class Xhr {
    * @returns {Object|String} 
    */
   static async gateway(data, raw) {
-    console.debug(this.getGatewayUrlFromRoot());
     return await this.post(this.getGatewayUrlFromRoot(), data, raw);
   }
 
@@ -75,7 +81,7 @@ class Xhr {
   /**
    * 
    * @author Tobias
-   * @version 31.12.2020
+   * @version 03.01.2021
    * @since 31.12.2020
    * @param {String} method 
    * @param {String} url 
@@ -91,7 +97,34 @@ class Xhr {
       xhr.onload    = () => resolve(xhr);
 
       xhr.open(method, url, true);
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
       xhr.send(data);
     });
+  }
+
+  /**
+   * 
+   * @author Tobias
+   * @version 03.01.2021
+   * @since 03.01.2021
+   * @param {Object} xhr 
+   * @returns {Object} 
+   */
+  static parse(xhr) {
+    if (xhr === undefined) {
+      return undefined;
+    }
+    if (xhr.responseText === undefined) {
+      try {
+        return JSON.parse(xhr);
+      } catch (e) {
+        return xhr;
+      }
+    }
+    try {
+      return JSON.parse(xhr.responseText);
+    } catch (e) {
+      return xhr.responseText;
+    }
   }
 }
