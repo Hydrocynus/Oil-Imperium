@@ -1,5 +1,5 @@
 <?php 
-require_once("./logHandler.php");//!Testing
+require_once("LogHandler.php");
 require_once('Utils.php');
 
 abstract class Socket {
@@ -47,6 +47,7 @@ abstract class Socket {
    */
   function start() {
     echo "\n\n\n\n------------------------------------------------------------";
+    LogHandler::writeLog("Server gestartet");
     while(true) {
 
       $write = $except = null;
@@ -54,7 +55,6 @@ abstract class Socket {
       @socket_select($read, $write, $except, 1); 
       
       foreach($read as $socket) {
-        echo "\nsocket: " . $socket;
         //Master Socket
         if ($socket == $this->master) {
           //onConnection
@@ -63,19 +63,21 @@ abstract class Socket {
         } 
         else {//Client Handling
           //Client recv
-          $recv = @socket_recv($socket, $buf, "2048", 0);//!
-          echo "\nrecv: ". $recv; //!
+          $recv = @socket_recv($socket, $buf, "2048", 0);
+          LogHandler::writeLog("recv: ". $recv);
 
           if ($recv === false) { //socket error
-            // "Line 40... add Error Handling"
-            echo "Socket Fail";
+            
+            $sockErrNo = socket_last_error($socket);
+            LogHandler::writeLog("Socket Error: ". $sockErrNo . "|". socket_strerror($sockErrNo));
+            $this->disconnect($socket); 
           } 
           else if ($recv == 0) { //connection lost handling
              $this->disconnect($socket); 
           }
           else { //socket handling
             //handshake
-            $u = $this->getUserBySocket($socket);//! sockets in user bauen
+            $u = $this->getUserBySocket($socket);
 
             if (!$u->handshake) {
               //Respond to Handshake
@@ -85,8 +87,8 @@ abstract class Socket {
             } 
             else { 
               //recieve Data 
-              echo "\nbuf: ".$buf;
               $data = $this->deframe($u, $buf);
+              LogHandler::writeLog("recv data: ". $data["payload"]);
               $this->broadcast($data["payload"]);
             }
           }
@@ -108,6 +110,8 @@ abstract class Socket {
     $newUser = new SocketClient(uniqid(), $socket);
     $this->users[$newUser->id] = $newUser;
     $this->sockets[$newUser->id] = $socket;
+    
+    LogHandler::writeLog("Connect: ". $newUser->id);
   }
 
   /** @todo del User | disconn trennen
@@ -130,6 +134,7 @@ abstract class Socket {
     $this->onClose($oldUser);
     socket_close($oldUser->socket);
 
+    LogHandler::writeLog("Disconnect: ". $oldUser->id);
     // $msg = $this->frame('', $oldUser, 'close'); //!
     // @socket_write($oldUser->socket, $msg, strlen($msg));
   }
@@ -226,19 +231,6 @@ abstract class Socket {
    * info: https://tools.ietf.org/html/rfc6455#section-5 
    */
   function getHeaderOfFrame($frame) {
-    //frame in Binär //! weg machen 
-    $bin = "";
-    for ($i=0; $i < strlen($frame); $i ++ ) {
-        $byte = substr($frame, $i);
-        $byte = decbin(ord($byte));
-        $zero = "";
-    
-        for ($j=strlen($byte); $j<8; $j++) {
-            $zero .= "0". $zero;
-        }
-        $bin .= $zero . $byte;
-    }
-    echo "\n\nbin: " . $bin . "\nlength: " . strlen($bin) . "\npayload length: " . (strlen($bin) - 64). " \n"; // info//!
 
     $header =  [
         //1. Byte
@@ -279,7 +271,7 @@ abstract class Socket {
     return $header; 
   }
 
-  /**
+  /** //!
    * Verarbeitet frame/buffer aus einem socket. 
    * Extrahiert Header und Payload und verarbeitet die Informationen.
    * Header daten in binär außer opcode(int) und length(int).
@@ -293,8 +285,17 @@ abstract class Socket {
   function deframe(&$user, $frame) {
     $header = $this->getHeaderOfFrame($frame);
     $payload = substr($frame, 6, $header["length"]); //length > 126 !
-    $payload = $this->xorStr($payload, $header["mask"]);
+    $payload = Utils::xorStr($payload, $header["mask"]);
 
+    $data = []; 
+    $data["payload"] = $payload;
+    $data["header"] = $header;
+
+    LogHandler::writeLog("data pl: ". $data["payload"]);
+    // echo "\n\n Data: \n"; //!
+    // var_dump($data);
+
+    return $data; //!todo
     //Header Verarbeiten 
     //check rsv in Header todo 
     if (ord($header['rsv1']) + ord($header['rsv2']) + ord($header['rsv3']) > 0) {
@@ -310,16 +311,18 @@ abstract class Socket {
         //binary-data
         break;
       case 8:
-        // todo: close the connection
-        echo "\nCLOSE CONN opcode 8!"; //todo //!
+        //close the connection
+        $this->disconnect($user);
         return "";
       case 9: //is ping frame
         //send pong frame w/ exact same payload data as ping frame 
         echo "\ntodo frame()";
+        LogHandler::writeLog("ping frame");
+
         $reply = $this->frame($payload,$user,'pong'); //todo frame
         socket_write($user->socket,$reply,strlen($reply));
         return false;
-      case 10://is pong frame ? 
+      case 10://!is pong frame  
         break;
       default:
         //$this->disconnect($user); // todo: fail connection
@@ -328,8 +331,8 @@ abstract class Socket {
     }
  
     //!
-    echo "\npayload: " .$payload;
-    echo "\nopcode: ". $header["opcode"];
+    LogHandler::writeLog("deframed: " .$payload);
+    LogHandler::writeLog("opcode: ". $header["opcode"]);
 
     //mutiple Frames Handling | Frame > 2048 bits
     if ($user->multipleFrames) {
@@ -338,18 +341,17 @@ abstract class Socket {
       return $this->deframe($user, $frame);
     }
 
-    //extrahierte Daten vorranstellen
-    $payload = $user->partialMsg . $payload;
+    //extrahierte Daten vorranstellen 
+    //$payload = $user->partialMsg . $payload; //!
 
     //solange länger
-    if ($header['length'] > strlen($this->xorStr($payload, $header["mask"]))) {
-      echo "\nmultiple Frames:";
+    if ($header['length'] > strlen(Utils::xorStr($payload, $header["mask"]))) {
       $user->multipleFrames = true;
       $user->partialBuffer = $frame;
       return false;
     }
 
-    $payload = $this->xorStr($payload, $header["mask"]);
+    $payload = Utils::xorStr($payload, $header["mask"]);
 
     if ($header['fin']) {
       $user->partialMgs = "";
@@ -359,7 +361,7 @@ abstract class Socket {
     $user->partialMsg = $payload;
     return false;
     
-    //dec.
+    //dec
     $data["payload"] = $payload;
     $data["header"] = $header;
 
@@ -369,41 +371,54 @@ abstract class Socket {
     return $data;
   }
 
-  //!
-  function frame($message, $messageType='text', $messageContinues=false) {
-    switch ($messageType) {
+  
+  /**
+   * Baut Frame aus gegebenen Payload ,um für die Kommunikation verwendet werden zu können.
+   * Maskierung nicht unterstützt.
+   * @author Tim
+   * @version 04.01.2021 
+   * @since XX.12.2020
+   * @param string msg Payload des Frames.
+   * @param string msgType gibt den Opcode des Frames an.
+   * @param boolean msgFragment gibt an ob frame teil von mehreren Frames ist.
+   * @return string frame welches nun verwendet werden kann.
+   * info: https://tools.ietf.org/html/rfc6455#section-5
+   */
+  function frame($msg, $msgType='text', $msgFragment=false) {
+    //set opcode
+    switch ($msgType) {
       case 'continuous':
-        $b1 = 0;
+        $oc = 0;
         break;
       case 'text':
-        $b1 = 1;
+        $oc = 1;
         break;
       case 'binary':
-        $b1 = 2;
+        $oc = 2;
         break;
       case 'close':
-        $b1 = 8;
+        $oc = 8;
         break;
       case 'ping':
-        $b1 = 9;
+        $oc = 9;
         break;
       case 'pong':
-        $b1 = 10;
+        $oc = 10;
         break;
     }
-    if ($messageContinues) {
+    //check if frame is part of multiple Frames
+    if (!$msgFragment) {
+      $oc += 128;
     } 
-    else {
-      $b1 += 128;
-    }
-    var_dump($message);
-    $length = strlen($message);
+    
+    //get Length of payload
+    $length = strlen($msg);
     $lengthField = "";
     if ($length < 126) {
-      $b2 = $length;
+      $plLength = $length;
     } 
     elseif ($length < 65536) {
-      $b2 = 126;
+      $plLength = 126;
       $hexLength = dechex($length);
       //$this->stdout("Hex Length: $hexLength");
       if (strlen($hexLength)%2 == 1) {
@@ -419,7 +434,7 @@ abstract class Socket {
       }
     } 
     else {
-      $b2 = 127;
+      $plLength = 127;
       $hexLength = dechex($length);
       if (strlen($hexLength)%2 == 1) {
         $hexLength = '0' . $hexLength;
@@ -434,7 +449,8 @@ abstract class Socket {
       }
     }
 
-    return chr($b1) . chr($b2) . $lengthField . $message;
+    //baut frame zusammen
+    return chr($oc) . chr($plLength) . $lengthField . $msg;
   }
 
   /**
@@ -448,10 +464,13 @@ abstract class Socket {
    * @param string msg zu Versendende Nachrricht.
    */
   function send($user, $msg) {
+    LogHandler::writeLog("Send to Usr");
+    LogHandler::writeLog("msg: ".$msg);
+
     if ($user->handshake) {
+      $frame = $msg;
       $frame = $this->frame($msg);
       socket_write($user->socket, $frame, strlen($frame));
-      echo "\nsend sth to user";
     } else { //! storage system überarbeiten
       $this->storage[] += ["user" => $user, "msg" => $msg];
     }
@@ -471,5 +490,4 @@ abstract class Socket {
     }
   }
   
-
 }
