@@ -25,7 +25,7 @@ class Socket {
   /**
    * 
    * @author Tobias
-   * @version 03.01.2021
+   * @version 04.01.2021 (Tim) onmessage hinzugefügt
    * @since 03.01.2021
    * @param {String} url 
    * @returns {void}
@@ -40,6 +40,7 @@ class Socket {
       this.openWebSocket(url);
     }
     this.socket.onopen  = (e) => console.debug("WebSocket connected on " + url);
+    this.socket.onmessage = (e) => { console.debug("WebSocket message "+ e.data);}
   }
 
   /**
