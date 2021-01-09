@@ -1,14 +1,14 @@
 /**
  * 
  * @author Tobias
- * @version 03.01.2021
+ * @version 09.01.2021
  * @since 29.12.2020
  */
 class Socket {
   /**
    * 
    * @author Tim Tobias
-   * @version 03.01.2021
+   * @version 09.01.2021 (Tobias: onopen und onmessage Methoden)
    * @since 29.12.2020
    * @param {Number|String} host 
    * @param {Number|String} port 
@@ -18,16 +18,25 @@ class Socket {
     this.host = host;
     this.port = port;
     this.onopen, this.onmessage;
-
-    this.maxTryCount = 3;
-    let url = "ws://" + host + ":" + port;
-    this.openWebSocket(url);
   }
 
   /**
    * 
    * @author Tobias
-   * @version 04.01.2021 (Tim) onmessage hinzugefügt
+   * @version 09.01.2021
+   * @since 09.01.2021
+   * @returns {void}
+   */
+  open() {
+    this.maxTryCount = 3;
+    this.url = "ws://" + this.host + ":" + this.port;
+    this.openWebSocket(this.url);
+  }
+
+  /**
+   * 
+   * @author Tobias
+   * @version 09.01.2021 (Tobias: onopen und onmessage Methoden)
    * @since 03.01.2021
    * @param {String} url 
    * @returns {void}
