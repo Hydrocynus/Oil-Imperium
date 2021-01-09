@@ -4,7 +4,8 @@ d3.select("#code").text(localStorage.getItem("code") || "----");
 // Socket verbinden
 Xhr.rootPath = "..";
 let socket = new Socket(localStorage.getItem("ip"), localStorage.getItem("port"));
-console.debug (socket);
+socket.onopen = (e) => console.debug("WebSocket geöffnet", e);
+socket.onmessage = (e) => console.debug("WebSocket Nachricht: ", e.data);
 
 //Frabe aendern durch ein Lable
 function colorchange(element){

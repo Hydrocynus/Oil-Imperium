@@ -17,6 +17,8 @@ class Socket {
   constructor(host, port) {
     this.host = host;
     this.port = port;
+    this.onopen, this.onmessage;
+
     this.maxTryCount = 3;
     let url = "ws://" + host + ":" + port;
     this.openWebSocket(url);
@@ -39,8 +41,8 @@ class Socket {
       Utils.delay(1000);
       this.openWebSocket(url);
     }
-    this.socket.onopen  = (e) => console.debug("WebSocket connected on " + url);
-    this.socket.onmessage = (e) => { console.debug("WebSocket message "+ e.data);}
+    this.socket.onopen    = this.onopen;
+    this.socket.onmessage = this.onmessage;
   }
 
   /**
