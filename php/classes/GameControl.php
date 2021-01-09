@@ -85,7 +85,7 @@ class GameControl extends Barrel {
   /**
    * Prueft, ob der Port zusammen mit der IP bereits in der Datenbank existiert.
    * @author Tobias
-   * @version 27.12.2020
+   * @version 03.01.2021
    * @since 27.12.2020
    * @param string $port Port, der ueberprueft werden soll.
    * @param string $ip IP, mit der der Port in Verbindung steht.
@@ -95,7 +95,7 @@ class GameControl extends Barrel {
     $resp = $this->getGameInfoByIP($ip);
     foreach ($resp as $game) {
       if (isset($game['ip']) && isset($game['port']) && isset($game['spielcode'])) {
-        return true;
+        if ($game['port'] == $port) return true;
       }
     }
     return false;
