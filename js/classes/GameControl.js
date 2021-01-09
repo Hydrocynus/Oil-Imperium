@@ -13,7 +13,7 @@ class GameControl {
    * @since 09.01.2021
    */
   constructor(socket) {
-    let socket       = new Socket(localStorage.getItem("ip"), localStorage.getItem("port"));
+    if (socket === undefined) socket = new Socket(localStorage.getItem("ip"), localStorage.getItem("port"));
     socket.onerror   = () => console.debug("Websocket konnte nicht verbunden werden!");
     socket.onopen    = e  => console.debug("WebSocket geöffnet", e);
     socket.onmessage = e  => this.messageHandler(e.data);
