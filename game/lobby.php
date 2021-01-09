@@ -5,13 +5,13 @@ spl_autoload_register(function ($class) { require_once("classes/$class.php"); })
 ?>
 <link rel="stylesheet" href="lobby.css">
 <link rel="stylesheet" href="../home/home.css">
-<script src="lobby.js" defer></script>
 <script src="../js/classes/Socket.js"></script>
 <script src="../js/classes/Xhr.js"></script>
 <script src="../js/classes/Utils.js"></script>
+<script src="lobby.js" defer></script>
 </head>
 
-<body>
+<body">
   <div id="background">
     <!-- Mask-->
     <div class="mask d-flex align-items-center justify-content-center">
