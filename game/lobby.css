@@ -4,11 +4,11 @@
   border: rgba(95, 95, 95, 0.15) 5px solid;
 }
 
-
 label[for="farbe"]{
   width: 100px;
   height: 40px;
   background-color: black;
+  border-radius: 15px;
   margin-bottom: -15px
 }
 
