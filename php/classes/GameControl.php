@@ -129,7 +129,7 @@ class GameControl extends Barrel {
    * @return bool true, wenn der Port im gueltigen Bereich liegt.
    */
   private function portInRange($port) : bool {
-    return $port >= 49152 && $port <= 65535;
+    return $port >= 49152 && $port <= 56000;
   }
 
   /**
@@ -154,7 +154,7 @@ class GameControl extends Barrel {
                 localStorage.setItem('ip',   '$ip');
                 localStorage.setItem('port', '$port');
                 if (!localStorage.getItem('$code')) localStorage.setItem('$code', '{}');
-                location = '../game/lobby.php';
+                location = '../game';
               </script>";
     echo $script;
   }
