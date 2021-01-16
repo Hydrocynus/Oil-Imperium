@@ -8,7 +8,8 @@ class SocketClient {
   public $socket;
   public $header = array();
   public $handshake = false;
-
+  public $lastPing; 
+  
   //message Fragmentation
   public $multipleFrames;
   public $partialBuffer; 
