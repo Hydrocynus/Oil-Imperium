@@ -89,7 +89,8 @@ abstract class Socket {
               //recieve Data 
               $data = $this->deframe($u, $buf);
               LogHandler::writeLog("recv data: ". $data["payload"]);
-              $this->broadcast($data["payload"]);
+              // $this->broadcast($data["payload"]);
+              $this->onMessage($u, $data["payload"]);
             }
           }
         }
