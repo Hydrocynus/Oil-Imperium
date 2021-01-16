@@ -6,13 +6,13 @@
  */
 class Socket {
   /**
-   * 
+   * Konstruktor der Klasse Socket.
    * @author Tim Tobias
    * @version 09.01.2021 (Tobias: onopen und onmessage Methoden)
    * @since 29.12.2020
    * @param {Number|String} host 
    * @param {Number|String} port 
-   * @returns 
+   * @returns {void}
    */
   constructor(host, port) {
     this.host = host;
@@ -21,7 +21,7 @@ class Socket {
   }
 
   /**
-   * 
+   * Oeffnet das Socket.
    * @author Tobias
    * @version 09.01.2021
    * @since 09.01.2021
@@ -34,11 +34,11 @@ class Socket {
   }
 
   /**
-   * 
+   * Versucht das WebSocket mit mehreren Versuchen zu starten.
    * @author Tobias
    * @version 09.01.2021 (Tobias: onopen und onmessage Methoden)
    * @since 03.01.2021
-   * @param {String} url 
+   * @param {String} url URL des Websockets.
    * @returns {void}
    */
   openWebSocket(url) {
@@ -55,11 +55,11 @@ class Socket {
   }
 
   /**
-   * 
+   * Sendet einen String ueber das Socket.
    * @author Tim Tobias
    * @version 03.01.2021
    * @since 08.12.2020
-   * @param {String} msg 
+   * @param {String} msg Zu sendender String.
    * @returns {void}
    */
   send(msg) {
@@ -67,12 +67,12 @@ class Socket {
   }
 
   /**
-   * 
+   * Startet das Websocket Serverseitig.
    * @author Tobias
    * @version 03.01.2021
    * @since 29.12.2020
-   * @param {Number|String} [host] 
-   * @param {Number|String} [port] 
+   * @param {Number|String} [host] URL des Sockets.
+   * @param {Number|String} [port] Port des Sockets.
    * @returns {void}
    */
   async startWebSocket(host = this.host, port = this.port) {
