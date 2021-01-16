@@ -9,10 +9,11 @@ spl_autoload_register(function ($class) { require_once("classes/$class.php"); })
 <script src="../js/classes/Xhr.js"></script>
 <script src="../js/classes/Utils.js"></script>
 <script src="../js/classes/GameControl.js"></script>
+<script src="../js/classes/InstructionHandler.js"></script>
 <script src="game.js" defer></script>
 </head>
 
-<body">
+<body onload="load()">
   <div id="background">
     <!-- Mask-->
     <div class="mask d-flex align-items-center justify-content-center">
