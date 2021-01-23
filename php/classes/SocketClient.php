@@ -9,7 +9,7 @@ class SocketClient {
   public $header = array();
   public $handshake = false;
   public $lastPing; 
-  
+
   //message Fragmentation
   public $multipleFrames;
   public $partialBuffer; 
@@ -18,5 +18,6 @@ class SocketClient {
   function __construct($id, $socket) { //! gameId
     $this->id = $id;
     $this->socket = $socket;
+    $this->lastPing = time();
   }
 }

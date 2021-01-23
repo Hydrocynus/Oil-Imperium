@@ -5,9 +5,9 @@ class OilSocket extends Socket {
   }
 
   protected function onMessage($user, $msg) {
-      $this->broadcast($msg);
+      $this->broadcast("BC: ". $msg);
       // try { $msg = json_decode($msg); }
-      // catch (Exception $e) { return; }
+      // catch (Exception $e) { return ; }
       // $cmd = $msg[0];
       // $msg  = $msg[1];
       // return broadcastInstruction($cmd, $msg);
@@ -15,7 +15,6 @@ class OilSocket extends Socket {
 
   protected function onConnection($user) {
       // foreach($this->users as $u) 
-      echo "\nnew Connection established";
       //$this->send($user, "conn Send");
   }
 

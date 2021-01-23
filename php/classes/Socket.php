@@ -1,12 +1,9 @@
 <?php 
-require_once("LogHandler.php");
-require_once('Utils.php');
-
 abstract class Socket {
   protected $users = [];
   protected $sockets = []; // Über Client aufrufen
   protected $master;
-  protected $storage = [];
+  protected $storage = []; // nicht eingebunden 
 
   function __construct($addr, $port) {
     $this->master = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
@@ -46,14 +43,30 @@ abstract class Socket {
    * @since 03.12.2020
    */
   function start() {
-    echo "\n\n\n\n------------------------------------------------------------";
-    LogHandler::writeLog("Server gestartet");
-    while(true) {
+    LogHandler::writeLog("Server started");
 
+    while(true) {
+      LogHandler::writeLog("is alive--------------------");
+
+      //Heartbeat 
+      foreach($this->sockets as $socket) {
+
+        if ($socket == $this->master) { continue; }
+        $u = $this->getUserBySocket($socket);
+        LogHandler::writeLog($socket);
+        LogHandler::writeLog("heartbeat: " . (time() - $u->lastPing));
+        if (time() -  $u->lastPing > 30 ) {
+          LogHandler::writeLog("send ping");
+          $u->lastPing = time();
+          $this->ping($u); 
+        }
+      } 
+
+      //Handle Sockets 
       $write = $except = null;
       $read = $this->sockets;
-      @socket_select($read, $write, $except, 1); 
-      
+      $sel = socket_select($read, $write, $except, 1);
+            
       foreach($read as $socket) {
         //Master Socket
         if ($socket == $this->master) {
@@ -73,20 +86,19 @@ abstract class Socket {
             $this->disconnect($socket); 
           } 
           else if ($recv == 0) { //connection lost handling
-             $this->disconnect($socket); 
+            LogHandler::writeLog("connection Lost");
+            $this->disconnect($socket); 
           }
-          else { //socket handling
-            //handshake
-            $u = $this->getUserBySocket($socket);
+          else { //client socket handling
 
-            if (!$u->handshake) {
-              //Respond to Handshake
+            $u = $this->getUserBySocket($socket);
+            if (!$u->handshake) { //Respond to Handshake
               $tmp = str_replace("\r", "", $buf);
               if (strpos($tmp, "\n\n") === false) { continue; } 
               $this->handshake($u, $buf);
             } 
-            else { 
-              //recieve Data 
+            else {             
+              //recieve data
               $data = $this->deframe($u, $buf);
               LogHandler::writeLog("recv data: ". $data["payload"]);
               // $this->broadcast($data["payload"]);
@@ -96,6 +108,7 @@ abstract class Socket {
         }
       }
     }
+
   }
 
   /** @todo user bereits vorhanden prüfen
@@ -293,6 +306,7 @@ abstract class Socket {
     $data["header"] = $header;
 
     LogHandler::writeLog("data pl: ". $data["payload"]);
+    LogHandler::writeLog("Opcode: ". $header["opcode"]);
     // echo "\n\n Data: \n"; //!
     // var_dump($data);
 
@@ -313,11 +327,11 @@ abstract class Socket {
         break;
       case 8:
         //close the connection
+        LogHandler::writeLog("closing Frame");
         $this->disconnect($user);
         return "";
       case 9: //is ping frame
         //send pong frame w/ exact same payload data as ping frame 
-        echo "\ntodo frame()";
         LogHandler::writeLog("ping frame");
 
         $reply = $this->frame($payload,$user,'pong'); //todo frame
@@ -372,7 +386,6 @@ abstract class Socket {
     return $data;
   }
 
-  
   /**
    * Baut Frame aus gegebenen Payload ,um für die Kommunikation verwendet werden zu können.
    * Maskierung nicht unterstützt.
@@ -491,4 +504,22 @@ abstract class Socket {
     }
   }
   
+  /**
+   * Sendet Ping an User.
+   * @author Tim
+   * @version 21.01.2021
+   * @since 21.01.2021 
+   * @param object user Object.
+   * @param object user user welcher angepingt werden soll.
+   */
+  function ping($user) {
+    LogHandler::writeLog("ping gesendet");
+    
+    if ($user->handshake) {
+      $frame = $this->frame("PING", "ping");
+      socket_write($user->socket, $frame, strlen($frame));
+    } else { 
+      LogHandler::writeLog("user nicht mehr verbunden für Ping");
+    }
+  }
 }
