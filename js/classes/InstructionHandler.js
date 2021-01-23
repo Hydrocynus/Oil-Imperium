@@ -27,7 +27,7 @@ class InstructionHandler {
   /**
    * Nimmt Anweisungen (des Servers) an und extrahiert den Typ und den Wert der Anweisung.
    * @author Tobias
-   * @version 16.01.2021
+   * @version 19.01.2021
    * @since 16.01.2021
    * @param {String} message Anweisung des Servers.
    * @returns {Object} cmd : Befehl der Anweisung, value : Wert der Anweisung.
@@ -39,7 +39,7 @@ class InstructionHandler {
         throw "erol";
       }
     } catch (e) {
-      messgae = [false, false];
+      message = [false, false];
     }
 
     return { cmd: message[0], value: message[1] };
@@ -73,6 +73,7 @@ class InstructionHandler {
   static handle(instruction) {
     switch (instruction.cmd) {
       case "socketOpen": this.socketOpen(); break;
+      case "showCard": this.showCard(instruction.value); break;
       default: console.error("Unknown instruction command", instruction.cmd);
     }
   }
@@ -82,6 +83,16 @@ class InstructionHandler {
     const delay = 5000;
     Utils.delay(delay);
     gc.sendInstruction("autotest", delay);
+    d3.select("body").style("background-color", "red");
+  }
+
+  /**
+   * 
+   * @param {string} Inhalt der Karte.
+   */
+  static showCard(value) {
+    value = JSON.parse(value);
+    console.info("Karte vom Typ '" + value.type + "' erhalten: " + value.title + "\n" + value.text);
   }
 
 }
