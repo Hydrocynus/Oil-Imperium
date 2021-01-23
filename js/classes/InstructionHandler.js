@@ -80,10 +80,7 @@ class InstructionHandler {
 
   static socketOpen() {
     console.debug("socket opened");
-    const delay = 5000;
-    Utils.delay(delay);
-    gc.sendInstruction("autotest", delay);
-    d3.select("body").style("background-color", "red");
+    d3.select("#lobby").classed("none", false);
   }
 
   /**
