@@ -20,7 +20,7 @@ class OilSocket extends Socket {
           LogHandler::writeLog("Server got: ". $msg);
           LogHandler::writeLog("from: ". $user->id);
       
-          $this->broadcast("BC: ". $msg);
+          $this->broadcast($msg);
         break;
     }
 
