@@ -86,7 +86,6 @@ class InstructionHandler {
   static socketOpen() {
     console.debug("socket opened");
     d3.select("#lobby").classed("none", false);
-<<<<<<< HEAD
   }
 
   static userChange(value) {
@@ -125,8 +124,6 @@ class InstructionHandler {
     if (name !== null)  playerRow.select(".col:nth-child(1)").text(name || "Player #" + id);
     if (color !== null) playerRow.select(".col:nth-child(1)").style("background-color", color || "#a0a0a0").style("color", Utils.fontColorAutoKontrastHex(color || "#a0a0a0"));
     if (ready !== null) playerRow.select(".col:nth-child(2)").text(ready ? "Bereit" : "");
-=======
->>>>>>> b2a4985e65b1a8bf5ea6cb13f0bd2c991fc52323
   }
 
   /**
