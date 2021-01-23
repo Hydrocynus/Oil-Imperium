@@ -126,29 +126,53 @@ abstract class Socket {
     $this->sockets[$newUser->id] = $socket;
     
     LogHandler::writeLog("Connect: ". $newUser->id);
+    //$this->userList();
   }
 
-  /** @todo del User | disconn trennen
-   * Entfernt User aus users Array an.
-   * Entfernt Socket aus Socket Array an: //!
-   * schliesst socket
+  /**
+   * Entfernt Socket aus Socket Array.
+   * Schliesst Socket. 
    * @author Tim
-   * @version 03.12.2020 
+   * @version 23.01.2021 
    * @since 03.12.2020
-   * @param object Socket Object das sich mit dem master-Socket Verbindet. 
+   * @param object Socket Object, welches entfernt werden soll
    */
-  function disconnect($socket) {
+  function disconnect(&$socket) {
     $oldUser = $this->getUserBySocket($socket);
-
+    unset($socket);
+    
     if ($oldUser === null) return;
 
-    unset($this->users[$oldUser->id]);
     unset($this->sockets[$oldUser->id]);
+    $this->users[$oldUser->id]->unsetUser();
 
     $this->onClose($oldUser);
     socket_close($oldUser->socket);
 
-    LogHandler::writeLog("Disconnect: ". $oldUser->id);
+    LogHandler::writeLog("Disconnect user: ". $oldUser->id);
+    // $msg = $this->frame('', $oldUser, 'close'); //!
+    // @socket_write($oldUser->socket, $msg, strlen($msg));
+  }
+
+  /** 
+   * Führt disconnect() aus.
+   * -> Entfernt socket connection
+   * Entfernt User aus users Array an.
+   * Entfernt Socket aus Socket Array an.
+   * @author Tim
+   * @version 23.01.2021
+   * @since 03.12.2020
+   * @param object Socket Object, welcher user gelöscht werden soll. 
+   */
+  function deleteUser($socket) {
+    $oldUser = $this->getUserBySocket($socket);
+    $this->disconnect($socket);
+
+    if ($oldUser === null) return;
+
+    unset($this->users[$oldUser->id]);
+
+    LogHandler::writeLog("DELETE user: ". $oldUser->id);
     // $msg = $this->frame('', $oldUser, 'close'); //!
     // @socket_write($oldUser->socket, $msg, strlen($msg));
   }
@@ -500,7 +524,9 @@ abstract class Socket {
    */
   function broadcast($msg) {
     foreach ($this->users as $user) {
-      $this->send($user, $msg);
+      if ($user->socket) {
+        $this->send($user, $msg);
+      }
     }
   }
   
@@ -521,5 +547,23 @@ abstract class Socket {
     } else { 
       LogHandler::writeLog("user nicht mehr verbunden für Ping");
     }
+  }
+
+  /**
+   * Zeigt alle Users des Sockets an.
+   * @author Tim
+   * @version 23.01.2021
+   * @since 23.01.2021
+   */
+  function userList() {
+    LogHandler::writeLog("---------USERLIST-------");
+    foreach ($this->users as $user) {
+      LogHandler::writeLog("User: ". $user->id);
+    } 
+    
+    LogHandler::writeLog("-------USERLIST-------");
+    foreach ($this->sockets as $socket) {
+      LogHandler::writeLog("Sockets: ". $socket);
+    } 
   }
 }

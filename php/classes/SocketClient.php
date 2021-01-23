@@ -15,9 +15,21 @@ class SocketClient {
   public $partialBuffer; 
   public $partialMsg; 
 
-  function __construct($id, $socket) { //! gameId
+  function __construct($id, &$socket) { //! gameId
     $this->id = $id;
     $this->socket = $socket;
     $this->lastPing = time();
+  }
+
+  function unsetUser() {
+    $this->socket = null;
+    $this->header = null;
+    $this->handshake = null;
+    $this->lastPing = null;
+  }
+
+  function setUser(&$socket) {
+    $this->socket = $socket; 
+    $this->lastPing = time(); 
   }
 }
