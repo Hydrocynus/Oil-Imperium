@@ -41,12 +41,12 @@ class Socket {
    * @param {String} url URL des Websockets.
    * @returns {void}
    */
-  openWebSocket(url) {
+  async openWebSocket(url) {
     if (this.maxTryCount == 0) return;
     this.maxTryCount--;
+    await this.startWebSocket();
     this.socket = new WebSocket(url);
-    this.socket.onerror = () => {
-      this.startWebSocket();
+    this.socket.onerror   = () => {
       Utils.delay(1000);
       this.openWebSocket(url);
     }
@@ -73,7 +73,7 @@ class Socket {
    * @since 29.12.2020
    * @param {Number|String} [host] URL des Sockets.
    * @param {Number|String} [port] Port des Sockets.
-   * @returns {void}
+   * @returns {any} Rueckgabe der PHP Funktion.
    */
   async startWebSocket(host = this.host, port = this.port) {
     const data = "fnc=startWebSocket"
