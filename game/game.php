@@ -53,18 +53,20 @@ spl_autoload_register(function ($class) { require_once("classes/$class.php"); })
               <!-- Alle verfügbaren Spieler -->
 
               <!-- Tabellen Inhalt -->
-              <div class="row">
-                <div class="col">hier spieler db schrift farbe</div>
-                <div class="col">status</div>
-              </div>
+              <div id="playerlist">
+                <div class="row">
+                  <div class="col">hier spieler db schrift farbe</div>
+                  <div class="col">status</div>
+                </div>
 
-              <div class="row">
-                <div class="col">hier spieler db schrift farbe</div>
-                <div class="col">status</div>
-              </div>
-              <div class="row">
-                <div class="col">hier spieler db schrift farbe</div>
-                <div class="col">status</div>
+                <div class="row">
+                  <div class="col">hier spieler db schrift farbe</div>
+                  <div class="col">status</div>
+                </div>
+                <div class="row">
+                  <div class="col">hier spieler db schrift farbe</div>
+                  <div class="col">status</div>
+                </div>
               </div>
 
               <!-- Tabellen Inhalt -->
