@@ -9,7 +9,7 @@ label[for="farbe"]{
   height: 40px;
   background-color: black;
   border-radius: 15px;
-  margin-bottom: -15px
+  margin-bottom: -15px;
 }
 
 /* Veraenderung des Bereit Buttons */
@@ -29,6 +29,10 @@ input[type=checkbox]+label[for="confirm"]::before{
   float: right;
   margin-left: 5px;
   content: "";
+  -ms-user-select: None;
+  -moz-user-select: None;
+  -webkit-user-select: None;
+  user-select: None;
 }
 
 input[type=checkbox]:checked+label[for="confirm"]::before{

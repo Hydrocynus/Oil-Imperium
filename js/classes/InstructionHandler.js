@@ -71,9 +71,14 @@ class InstructionHandler {
    * @returns {void} 
    */
   static handle(instruction) {
+    console.debug(instruction);
+    try { const value = JSON.parse(instruction.value); } catch {}
+
     switch (instruction.cmd) {
       case "socketOpen": this.socketOpen(); break;
-      case "showCard": this.showCard(instruction.value); break;
+      case "userChange": this.userChange(value); break;
+      case "userAdd": this.userAdd(value); break;
+      case "showCard": this.showCard(value); break;
       default: console.error("Unknown instruction command", instruction.cmd);
     }
   }
@@ -83,12 +88,49 @@ class InstructionHandler {
     d3.select("#lobby").classed("none", false);
   }
 
+  static userChange(value) {
+    const id = value.id;
+    for (let k in value) {
+      switch (k) {
+        case "id": break;
+        case "name":  this.setUser(id, name); break;
+        case "color": this.setUser(id, null, color); break;
+        case "ready": this.setUser(id, null, null, ready); break;
+      }
+    }
+  }
+
+  static userAdd(value) {
+    this.setUser(value.id, value.name, value.color, value.ready);
+  }
+
+  static setUser(id, name, color, ready) {
+    let playerRow = d3.select("#player-" + id);
+  
+    if (playerRow.node() === null) {
+      const row = d3.select("#playerlist")
+        .append("div")
+          .attr("id", "#player-" + id)
+          .classed("row");
+
+      row.append("div")
+        .classed("col");
+
+      row.append("div")
+        .classed("col");
+    }
+
+    playerRow = d3.select("#player-" + id);
+    if (name !== null)  playerRow.select(".col:nth-child(1)").text(name || "Player #" + id);
+    if (color !== null) playerRow.select(".col:nth-child(1)").style("background-color", color || "#a0a0a0").style("color", Utils.fontColorAutoKontrastHex(color || "#a0a0a0"));
+    if (ready !== null) playerRow.select(".col:nth-child(2)").text(ready ? "Bereit" : "");
+  }
+
   /**
    * 
    * @param {string} Inhalt der Karte.
    */
   static showCard(value) {
-    value = JSON.parse(value);
     console.info("Karte vom Typ '" + value.type + "' erhalten: " + value.title + "\n" + value.text);
   }
 
