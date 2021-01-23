@@ -19,7 +19,7 @@ function startWebSocket() {
   closeBuffer();
   $host = $_POST['hst'];
   $port = $_POST['prt'];
-  SocketMaster::startSocket($host, $port);
+  exec("php StartSocket.php ". $host ." ". $port);
 }
 
 // --- Outputbuffer ---

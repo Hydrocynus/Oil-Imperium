@@ -13,10 +13,10 @@ spl_autoload_register(function ($class) { require_once("classes/$class.php"); })
 <script src="game.js" defer></script>
 </head>
 
-<body onload="load()">
+<body>
   <div id="background">
     <!-- Mask-->
-    <div class="mask d-flex align-items-center justify-content-center">
+    <div id="lobby" class="mask d-flex align-items-center justify-content-center none">
       <!-- Container -->
       <div class="container text-white text-center">
         <h1 class="text-white">Lobby</h1>
@@ -29,12 +29,12 @@ spl_autoload_register(function ($class) { require_once("classes/$class.php"); })
             <div class="row">&nbsp;</div>
             <!-- Eigende Spieler anpassungen -->
             <div class="row">
-              <div class="col">Name:<input type="text" value="Player"></div>
+              <div class="col">Name:<input type="text" value="Player" onchange="nameChange(this)"></div>
               <div class="col">Farbe:
                 <label for="farbe"></label>
-                <input id="farbe" type="color" value="Player" visible="false" onchange="colorchange(this)" style="display:none">
+                <input id="farbe" type="color" value="Player" visible="false" onchange="colorChange(this)" style="display:none">
               </div>
-              <div class="col"><input id="confirm" type="checkbox"/><label for="confirm">Bereit:</label></div>
+              <div class="col"><input id="confirm" type="checkbox" onchange="readyChange(this)"><label for="confirm">Bereit:</label></div>
 
             </div>
             <!-- Eigende Spieler anpassungen -->
