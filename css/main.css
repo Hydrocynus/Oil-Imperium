@@ -2,3 +2,7 @@
   font-family: 'Century Gothic';
   src: url('/OilImp/font/CenturyGothic.ttf');
 }
+
+.none {
+  display: none !important;
+}
