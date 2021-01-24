@@ -14,7 +14,12 @@ spl_autoload_register(function ($class) { require_once("classes/$class.php"); })
 </head>
 
 <body>
-  <div id="background">
+  <div id="background" class="d-flex">
+    <div id="loading">
+      <img src="../img/derrick.gif">
+      <br>
+      <span></span>
+    </div>
     <!-- Mask-->
     <div id="lobby" class="mask d-flex align-items-center justify-content-center none">
       <!-- Container -->
