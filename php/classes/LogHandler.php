@@ -13,7 +13,7 @@ class LogHandler {
   public static function writeLog($txt, $newLine = false, $file ="./logs/log.txt") {
     $newLog = "";
     if ($newLine) { $newLog = "\n";}
-    $newLog .= date("Y.m.d H:i") . ": " . $txt . "\r\n";
+    $newLog .= date("Y.m.d H:i") . ": " . print_r($txt, true) . "\r\n";
     $logFile = @fopen($file, "a");
     fwrite($logFile, $newLog);
     fclose($logFile);
