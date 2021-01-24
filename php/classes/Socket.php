@@ -5,6 +5,7 @@ abstract class Socket {
   protected $master;
   protected $storage = []; // nicht eingebunden 
   protected $serverid;
+  protected $state;
 
   function __construct($addr, $port) {
     $this->master = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
@@ -19,7 +20,7 @@ abstract class Socket {
   abstract protected function onMessage($user, $msg);
   abstract protected function onClose($user);
 
-  /** ? Sockets in Users für iterationen 
+  /** 
    * Gibt User vom zugehörigen socket. 
    * @author Tim
    * @version 08.12.2020 
@@ -51,7 +52,7 @@ abstract class Socket {
 
     while(true) {
       LogHandler::writeLog("tack". $this->serverid, false, "./logs/ticks/".$this->serverid.".txt");
-      //Heartbeat 
+      //Heartbeat @todo als fkt
       foreach($this->sockets as $socket) {
 
         if ($socket == $this->master) { continue; }
@@ -63,7 +64,7 @@ abstract class Socket {
         }
       } 
 
-      //Handle Sockets 
+      //Handle Sockets @todo als fkt
       $write = $except = null;
       $read = $this->sockets;
       socket_select($read, $write, $except, 1);
@@ -108,9 +109,14 @@ abstract class Socket {
           }
         }
       }
+
+      $this->stopServer();
     }
 
   }
+
+
+//--user-handling
 
   /** @todo user bereits vorhanden prüfen
    * Wird aufgerufen wenn ein Client ein handshake request sendet.
@@ -195,6 +201,24 @@ abstract class Socket {
     $this->userList();
     // $msg = $this->frame('', $oldUser, 'close'); //!
     // @socket_write($oldUser->socket, $msg, strlen($msg));
+  }
+
+  /** 
+   * Prüft ob User mit dem Server connected sind.
+   * Falls keine User vorhanden sind wird dieser geschlossen.
+   * @author Tim
+   * @version 24.01.2021
+   * @since 09.12.2020
+   * @return void
+   */
+  function stopServer() {
+    LogHandler::writeLog("check users",true);
+    $u = $this->getUsers($this->users);
+
+    if (count($u["conUsers"]) <= 0) {
+      LogHandler::writeLog("STOP SERVER!",true);
+      exit();
+    }
   }
 
   /**
@@ -352,17 +376,18 @@ abstract class Socket {
 
     LogHandler::writeLog("DEFRAME: ", true);
     LogHandler::writeLog("Frame: ". Utils::getBinOfFrame($frame));
-    LogHandler::writeLog("opcode: ". $header["opcode"]);
     LogHandler::writeLog("payload: ". $data["payload"]);
-
+    LogHandler::writeLog($data);
     return $data; //!todo
-    //Header Verarbeiten 
+
     //check rsv in Header todo 
     if (ord($header['rsv1']) + ord($header['rsv2']) + ord($header['rsv3']) > 0) {
       //$this->disconnect($user); // todo: fail connection
       return false;
     }
     //opcode Verarbeiten todo
+    
+    LogHandler::writeLog("opcode: ". $header["opcode"]);
     switch($header["opcode"]) {
       case 0:
       case 1:
@@ -370,18 +395,21 @@ abstract class Socket {
       case 2:
         //binary-data
         break;
-      case 8:
+      case 8: //closing frame
         //close the connection
-        LogHandler::writeLog("closing Frame");
+        LogHandler::writeLog("->got closing Frame");
         $this->disconnect($user);
         return "";
-      case 9: //is ping frame
+      case 9: //ping frame
         //send pong frame w/ exact same payload data as ping frame 
-
-        $reply = $this->frame($payload,$user,'pong'); //todo frame
+        LogHandler::writeLog("->got ping Frame");
+        $reply = $this->frame($payload, $user, 'pong'); 
         socket_write($user->socket,$reply,strlen($reply));
         return false;
-      case 10://!is pong frame  
+      case 10://pong frame
+        //kein client-ping system vorhanden
+        LogHandler::writeLog("->got pong Frame (do nothing)");
+        return false;
         break;
       default:
         //$this->disconnect($user); // todo: fail connection
@@ -599,4 +627,28 @@ abstract class Socket {
     
     LogHandler::writeLog("-----------------------", false, "./logs/list.txt");
   }
+  
+  /** 
+   * Sortiert alle Users des Servers, ob sie ein socket besitzen oder nicht. 
+   * @author Tim
+   * @version 24.01.2021
+   * @since 09.12.2020
+   * @return array ["conUsers"] enthält alle Users mit socket; ["unConUsers"] enthält alle Users ohne socket
+   */
+  function getUsers(&$users) {
+    $info = []; 
+    $info["conUsers"] = [];
+    $info["unConUsers"] = [];
+
+    foreach ($users as $u) {
+      if (isset($u->socket)) {
+        array_push($info["conUsers"], $u);
+      } else {
+        array_push($info["unConUsers"], $u);
+      }
+    }
+    
+    return $info;
+  }
+
 }
