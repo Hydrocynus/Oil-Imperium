@@ -32,13 +32,7 @@ class Socket {
     this.maxTryCount = 3;
     this.url = "ws://" + this.host + ":" + this.port;
 
-    this.socket = new WebSocket(this.url);
-    this.socket.onerror   = () => {
-      this.openWebSocket(this.url);
-    }
-
-    this.socket.onopen    = this.onopen;
-    this.socket.onmessage = this.onmessage;
+    this.openWebSocket(url);
   }
 
   /**
@@ -52,10 +46,10 @@ class Socket {
   async openWebSocket(url) {
     if (this.maxTryCount == 0) return;
     this.maxTryCount--;
-    await this.startWebSocket();
-    Utils.delay(1000);
     this.socket = new WebSocket(url);
-    this.socket.onerror   = () => {
+    this.socket.onerror   = async () => {
+      await this.startWebSocket();
+      Utils.delay(1000);
       this.openWebSocket(url);
     }
     this.socket.onopen    = this.onopen;
