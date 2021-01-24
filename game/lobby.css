@@ -40,3 +40,33 @@ input[type=checkbox]:checked+label[for="confirm"]::before{
   display: unset;
   font-weight: bold;
 }
+
+#loading {
+  align-self: center;
+  margin-left: calc(50% - (0.5 * 980px));
+  margin-bottom: 11.8%;
+}
+#loading span {
+  position: relative;
+  bottom: 12px;
+  background-color: black;
+  color: white;
+  padding: 6px;
+  font-size: 21px;
+  width: 100%;
+  display: block;
+  text-align: center;
+  border-radius: 5px;
+}
+#loading span:after {
+  content: "Verbindung wird hergestellt ...";
+  animation: loading 2s infinite;
+}
+
+@keyframes loading {
+  0%   { content: "Verbindung wird hergestellt ."; }
+  25%  { content: "Verbindung wird hergestellt .."; }
+  50%  { content: "Verbindung wird hergestellt ..."; }
+  75%  { content: "Verbindung wird hergestellt "; }
+  100% { content: "Verbindung wird hergestellt ."; }
+}
