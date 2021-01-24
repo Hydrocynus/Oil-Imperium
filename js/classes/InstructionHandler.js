@@ -39,6 +39,7 @@ class InstructionHandler {
         throw "erol";
       }
     } catch (e) {
+      console.error(e);
       message = [false, false];
     }
 
@@ -71,8 +72,8 @@ class InstructionHandler {
    * @returns {void} 
    */
   static handle(instruction) {
-    console.debug(instruction);
-    try { const value = JSON.parse(instruction.value); } catch {}
+    let value;
+    try { value = JSON.parse(instruction.value); } catch {}
 
     switch (instruction.cmd) {
       case "socketOpen": this.socketOpen(); break;
@@ -108,20 +109,20 @@ class InstructionHandler {
     let playerRow = d3.select("#player-" + id);
   
     if (playerRow.node() === null) {
-      const row = d3.select("#playerlist")
+      let row = d3.select("#playerlist")
         .append("div")
-          .attr("id", "#player-" + id)
-          .classed("row");
+          .attr("id", "player-" + id)
+          .classed("row", true);
 
       row.append("div")
-        .classed("col");
+        .classed("col", true);
 
       row.append("div")
-        .classed("col");
+        .classed("col", true);
     }
 
     playerRow = d3.select("#player-" + id);
-    if (name !== null)  playerRow.select(".col:nth-child(1)").text(name || "Player #" + id);
+    if (name  !== null) playerRow.select(".col:nth-child(1)").text(name || "Player #" + id);
     if (color !== null) playerRow.select(".col:nth-child(1)").style("background-color", color || "#a0a0a0").style("color", Utils.fontColorAutoKontrastHex(color || "#a0a0a0"));
     if (ready !== null) playerRow.select(".col:nth-child(2)").text(ready ? "Bereit" : "");
   }
