@@ -5,7 +5,13 @@ class OilSocket extends Socket {
   }
 
   protected function onMessage($user, $msg) {
-    switch($msg) {
+    
+    try { $msg = json_decode($msg); }
+    catch (Exception $e) { return ; }
+    $cmd = $msg[0];
+    $msg = $msg[1];
+    
+    switch($cmd) {
       case "PING": 
         return;
         break;
@@ -20,19 +26,15 @@ class OilSocket extends Socket {
       case "LogUser": 
         $this->userList();
         break;
+      case "userChange": 
+        $this->broadcastInstruction($cmd, $msg);
+        break;
       default: 
         LogHandler::writeLog("Server got: ". $msg);
         LogHandler::writeLog("from: ". $user->id);
-    
-        $this->broadcast($msg);
         break;
     }
-    return; //Tobi mach ma lukki
-    try { $msg = json_decode($msg); }
-    catch (Exception $e) { return ; }
-    $cmd = $msg[0];
-    $msg = $msg[1];
-    $this->broadcastInstruction($cmd, $msg);
+    
     
   }
 

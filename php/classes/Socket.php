@@ -4,6 +4,7 @@ abstract class Socket {
   protected $sockets = []; // Über Client aufrufen
   protected $master;
   protected $storage = []; // nicht eingebunden 
+  protected $serverid;
 
   function __construct($addr, $port) {
     $this->master = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
@@ -11,6 +12,7 @@ abstract class Socket {
     socket_bind($this->master, $addr, $port);
     socket_listen($this->master);
     $this->sockets["master"] = $this->master;
+    $this->serverid = uniqid();
   }
 
   abstract protected function onConnection($user);
@@ -45,10 +47,10 @@ abstract class Socket {
    */
   function start() {
     LogHandler::writeLog("Server start() excecuted",true);
-    LogHandler::writeLog("Server id:". uniqid(), true);
+    LogHandler::writeLog("Server id:". $this->serverid, true);
 
     while(true) {
-
+      LogHandler::writeLog("tack". $this->serverid, false, "./logs/ticks/".$this->serverid.".txt");
       //Heartbeat 
       foreach($this->sockets as $socket) {
 
@@ -64,7 +66,7 @@ abstract class Socket {
       //Handle Sockets 
       $write = $except = null;
       $read = $this->sockets;
-      $sel = socket_select($read, $write, $except, 1);
+      socket_select($read, $write, $except, 1);
             
       foreach($read as $socket) {
         //Master Socket
@@ -121,7 +123,21 @@ abstract class Socket {
    * @return void
    */
   function connect($socket) {
-    $newUser = new SocketClient(uniqid(), $socket);
+    //is nh user drinne? 
+    foreach ($this->users as $u) {
+      if (!isset($u->socket)) {
+        LogHandler::writeLog("SOCKETLESS user: ". $u->id);
+        $newUser = $u;
+      }
+    }
+    //nein ->
+    if (isset($newUser)) {
+      $newUser->setUser($socket);
+      LogHandler::writeLog("socketless user reconected: ". $newUser->id);
+    } else {
+      $newUser = new SocketClient(uniqid(), $socket); 
+    }
+
     $this->users[$newUser->id] = $newUser;
     $this->sockets[$newUser->id] = $socket;
     
@@ -147,10 +163,11 @@ abstract class Socket {
     unset($this->sockets[$oldUser->id]);
     $this->users[$oldUser->id]->unsetUser();
 
-    $this->onClose($oldUser);
+    $this->onClose($oldUser); //! notw?
     socket_close($oldUser->socket);
 
     LogHandler::writeLog("Disconnect user: ". $oldUser->id);
+    $this->userList();
     // $msg = $this->frame('', $oldUser, 'close'); //!
     // @socket_write($oldUser->socket, $msg, strlen($msg));
   }
@@ -166,7 +183,7 @@ abstract class Socket {
    * @param object Socket Object, welcher user gelöscht werden soll. 
    * @return void
    */
-  function deleteUser($socket) {
+  function deleteUser(&$socket) {
     $oldUser = $this->getUserBySocket($socket);
     $this->disconnect($socket);
 
@@ -175,6 +192,7 @@ abstract class Socket {
     unset($this->users[$oldUser->id]);
 
     LogHandler::writeLog("DELETE user: ". $oldUser->id);
+    $this->userList();
     // $msg = $this->frame('', $oldUser, 'close'); //!
     // @socket_write($oldUser->socket, $msg, strlen($msg));
   }
@@ -332,7 +350,8 @@ abstract class Socket {
     $data["payload"] = $payload;
     $data["header"] = $header;
 
-    LogHandler::writeLog("DEFRAME: ");
+    LogHandler::writeLog("DEFRAME: ", true);
+    LogHandler::writeLog("Frame: ". Utils::getBinOfFrame($frame));
     LogHandler::writeLog("opcode: ". $header["opcode"]);
     LogHandler::writeLog("payload: ". $data["payload"]);
 
@@ -524,6 +543,7 @@ abstract class Socket {
   function broadcast($msg) {
     foreach ($this->users as $user) {
       if ($user->socket) {
+        LogHandler::writeLog("Frame: ". Utils::getBinOfFrame($msg));
         $this->send($user, $msg);
       }
     }
@@ -540,7 +560,7 @@ abstract class Socket {
    */
   function ping($user) {
     if ($user->handshake) {
-      $frame = $this->frame("PING", "ping");
+      $frame = $this->frame("PONG", "ping");
       socket_write($user->socket, $frame, strlen($frame));
       LogHandler::writeLog("PING to: ". $user->id, true);
       
@@ -561,18 +581,22 @@ abstract class Socket {
     $u = count($this->users);
     $s = count($this->sockets);
 
-    LogHandler::writeLog("-----------------------", true, "list.txt");
+    LogHandler::writeLog("-----------------------", true, "./logs/list.txt");
 
-    LogHandler::writeLog("USERLIST (".$u.")", false, "list.txt");
+    LogHandler::writeLog("USERLIST (".$u.")", false, "./logs/list.txt");
     foreach ($this->users as $user) {
-      LogHandler::writeLog("User: ". $user->id, false, "list.txt");
+      $noSock = "";
+      if (!isset($user->socket)) {
+        $noSock = " (not connected)";
+      }
+      LogHandler::writeLog("User: ". $user->id. $noSock, false, "./logs/list.txt");
     } 
     
-    LogHandler::writeLog("SocketLIST (".$s.")", false, "list.txt");
+    LogHandler::writeLog("SocketLIST (".$s.")", false, "./logs/list.txt");
     foreach ($this->sockets as $k => $socket) {
-      LogHandler::writeLog("Sockets: ". $k, false, "list.txt");
+      LogHandler::writeLog("Sockets: ". $k, false, "./logs/list.txt");
     } 
     
-    LogHandler::writeLog("-----------------------", false, "list.txt");
+    LogHandler::writeLog("-----------------------", false, "./logs/list.txt");
   }
 }
