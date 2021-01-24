@@ -32,7 +32,7 @@ class Socket {
     this.maxTryCount = 3;
     this.url = "ws://" + this.host + ":" + this.port;
 
-    this.openWebSocket(url);
+    this.openWebSocket(this.url);
   }
 
   /**
