@@ -90,13 +90,12 @@ class InstructionHandler {
   }
 
   static userChange(value) {
-    const id = value.id;
     for (let k in value) {
       switch (k) {
         case "id": break;
-        case "name":  this.setUser(id, name); break;
-        case "color": this.setUser(id, null, color); break;
-        case "ready": this.setUser(id, null, null, ready); break;
+        case "name":  this.setUser(value.id, value.name); break;
+        case "color": this.setUser(value.id, null, value.color); break;
+        case "ready": this.setUser(value.id, null, null, value.ready); break;
       }
     }
   }
