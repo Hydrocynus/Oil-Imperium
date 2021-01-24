@@ -14,14 +14,8 @@ class OilSocket extends Socket {
     switch($cmd) {
       case "PING": 
         return;
-        break;
-      case "del": 
-        $this->deleteUser($user->socket);
-        $this->userList();
-        break;
-      case "dis": 
-        $this->disconnect($user->socket);
-        $this->userList();
+      case "TEST":
+        $this->broadcastInstruction($cmd, $msg);
         break;
       case "LogUser": 
         $this->userList();

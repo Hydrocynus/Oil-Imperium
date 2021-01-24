@@ -1,11 +1,12 @@
 <?php 
 abstract class Socket {
   protected $users = [];
-  protected $sockets = []; // Über Client aufrufen
+  protected $sockets = []; // Über Client aufrufen ?
   protected $master;
   protected $storage = []; // nicht eingebunden 
   protected $serverid;
   protected $state;
+  protected $bufSize;
 
   function __construct($addr, $port) {
     $this->master = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
@@ -14,6 +15,8 @@ abstract class Socket {
     socket_listen($this->master);
     $this->sockets["master"] = $this->master;
     $this->serverid = uniqid();
+    $this->state = "lobby";
+    $this->bufSize = "2048";
   }
 
   abstract protected function onConnection($user);
@@ -51,7 +54,7 @@ abstract class Socket {
     LogHandler::writeLog("Server id:". $this->serverid, true);
 
     while(true) {
-      LogHandler::writeLog("tack". $this->serverid, false, "./logs/ticks/".$this->serverid.".txt");
+      LogHandler::writeLog("tack(". $this->serverid.")[". $this->state ."]", false, "./logs/ticks/".$this->serverid.".txt");
       //Heartbeat @todo als fkt
       foreach($this->sockets as $socket) {
 
@@ -70,16 +73,13 @@ abstract class Socket {
       socket_select($read, $write, $except, 1);
             
       foreach($read as $socket) {
-        //Master Socket
+        //Master Socket-> connection handling
         if ($socket == $this->master) {
-          //onConnection
           $newReq = @socket_accept($socket);
           if ($newReq >= 0) { $this->connect($newReq); }
         } 
         else {//Client Handling
-          //Client recv
-          $recv = @socket_recv($socket, $buf, "2048", 0);
-          //LogHandler::writeLog("recv: ". $recv);
+          $recv = @socket_recv($socket, $buf, $this->bufSize, 0);
 
           if ($recv === false) { //socket error
             
@@ -98,12 +98,8 @@ abstract class Socket {
               $tmp = str_replace("\r", "", $buf);
               if (strpos($tmp, "\n\n") === false) { continue; } 
               $this->handshake($u, $buf);
-            } 
-            else {             
-              //recieve data
+            } else {  //recieve data
               $data = $this->deframe($u, $buf);
-              //LogHandler::writeLog("recv data: ". $data["payload"]);
-              // $this->broadcast($data["payload"]);
               $this->onMessage($u, $data["payload"]);
             }
           }
@@ -118,10 +114,11 @@ abstract class Socket {
 
 //--user-handling
 
-  /** @todo user bereits vorhanden prüfen
+  /** 
    * Wird aufgerufen wenn ein Client ein handshake request sendet.
+   *  Prüft ob ein nicht verbundener User existiert.
    * Legt neuen User im users-Array an.
-   * Legt neuen socket im socket-Array an: //!
+   * Legt neuen socket im socket-Array an.
    * @author Tim
    * @version 23.01.2021 
    * @since 03.12.2020
@@ -129,17 +126,12 @@ abstract class Socket {
    * @return void
    */
   function connect($socket) {
-    //is nh user drinne? 
-    foreach ($this->users as $u) {
-      if (!isset($u->socket)) {
-        LogHandler::writeLog("SOCKETLESS user: ". $u->id);
-        $newUser = $u;
-      }
-    }
-    //nein ->
-    if (isset($newUser)) {
+    $unConUsers = $this->getUsers($this->users)["unConUsers"];
+    
+    if (count($unConUsers) > 0 ) {
+      $newUser = $unConUsers[0];
       $newUser->setUser($socket);
-      LogHandler::writeLog("socketless user reconected: ". $newUser->id);
+      LogHandler::writeLog("Reconnect: ". $newUser->id);
     } else {
       $newUser = new SocketClient(uniqid(), $socket); 
     }
@@ -174,33 +166,25 @@ abstract class Socket {
 
     LogHandler::writeLog("Disconnect user: ". $oldUser->id);
     $this->userList();
-    // $msg = $this->frame('', $oldUser, 'close'); //!
-    // @socket_write($oldUser->socket, $msg, strlen($msg));
+
+    if ($this->state == "lobby") {$this->deleteUser($oldUser->id); }
   }
 
   /** 
-   * Führt disconnect() aus.
-   * -> Entfernt socket connection
    * Entfernt User aus users Array an.
-   * Entfernt Socket aus Socket Array an.
    * @author Tim
    * @version 23.01.2021
    * @since 03.12.2020
-   * @param object Socket Object, welcher user gelöscht werden soll. 
+   * @param string id des Users, welcher user gelöscht werden soll. 
    * @return void
    */
-  function deleteUser(&$socket) {
-    $oldUser = $this->getUserBySocket($socket);
-    $this->disconnect($socket);
+  function deleteUser($id) {
+    if ($this->users[$id] === null) return;
 
-    if ($oldUser === null) return;
+    unset($this->users[$id]);
 
-    unset($this->users[$oldUser->id]);
-
-    LogHandler::writeLog("DELETE user: ". $oldUser->id);
+    LogHandler::writeLog("DELETE user: ". $id);
     $this->userList();
-    // $msg = $this->frame('', $oldUser, 'close'); //!
-    // @socket_write($oldUser->socket, $msg, strlen($msg));
   }
 
   /** 
@@ -212,7 +196,6 @@ abstract class Socket {
    * @return void
    */
   function stopServer() {
-    LogHandler::writeLog("check users",true);
     $u = $this->getUsers($this->users);
 
     if (count($u["conUsers"]) <= 0) {
@@ -245,7 +228,7 @@ abstract class Socket {
         $index = strtolower(trim($tmp[0]));
         $header[$index] = trim($tmp[1]);
 
-      } else if (stripos($line,"get ") !== false) {  //! 
+      } else if (stripos($line,"get ") !== false) {  //! idk
         preg_match("/GET (.*) HTTP/i", $buf, $matches);
         $header["get"] = trim($matches[1]);
       }
@@ -257,7 +240,8 @@ abstract class Socket {
     if (!isset($header["connection"])) $resp = "HTTP/1.1 400 Bad Request";
     if (!isset($header["sec-websocket-key"])) $resp = "HTTP/1.1 400 Bad Request";
     if (!isset($header["sec-websocket-version"])) $resp = "HTTP/1.1 426 Upgrade Required\r\nSec-WebSocketVersion: 13";
-    //! erwitern?
+    
+    // moegliche header angaben:
     // if (!isset($header["origin"])) $resp = "HTTP/1.1 426 Upgrade Required\r\nSec-WebSocketVersion: 13";
     // if (!isset($header["sec-websocket-protocol"])) $resp = "HTTP/1.1 426 Upgrade Required\r\nSec-WebSocketVersion: 13";
     // if (!isset($header["sec-websocket-extensions"])) $resp = "HTTP/1.1 426 Upgrade Required\r\nSec-WebSocketVersion: 13";
@@ -271,11 +255,6 @@ abstract class Socket {
     $user->header = $header;
     $user->handshake = $buf;
 
-    // $wsKey = sha1($header["sec-websocket-key"]. $GUID);
-
-    // $token = "";
-    // for ($i=0; $i<20; $i++) $token .= chr(hexdec(substr($wsKey, $i*2, 2))); //! 
-    // $token = base64_encode($token) ."\n\n";
     $wsKey = $header["sec-websocket-key"]; 
     $token = $wsKey.'258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
     $token = base64_encode(sha1($token, true));
@@ -325,7 +304,7 @@ abstract class Socket {
         //2. Byte
         "hasmask" => $frame[1] & chr(128),
 
-        "length"  => (ord($frame[1]) >= 128) ? ord($frame[1]) - 128 : ord($frame[1]),//bindec(substr($bin, 9,7)),//!
+        "length"  => (ord($frame[1]) >= 128) ? ord($frame[1]) - 128 : ord($frame[1]),//bindec(substr($bin, 9,7)),//! frame groeßer machen
         "mask"    => "",//substr($frame, 2,4),//substr($bin, 16,32),
     ];
 
@@ -333,11 +312,15 @@ abstract class Socket {
     if ($header['length'] == 126) {
       if ($header['hasmask']) {
         $header['mask'] = $frame[4] . $frame[5] . $frame[6] . $frame[7];
+        $header['start'] = 8;
       }
       $header['length'] = ord($frame[2]) * 256 + ord($frame[3]);
     } elseif ($header['length'] == 127) {
+      
+      $header['start'] = 10;
       if ($header['hasmask']) {
         $header['mask'] = $frame[10] . $frame[11] . $frame[12] . $frame[13];
+        $header['start'] = 14;
       }
       $header['length'] = ord($frame[2]) * 65536 * 65536 * 65536 * 256 
                 + ord($frame[3]) * 65536 * 65536 * 65536
@@ -349,12 +332,13 @@ abstract class Socket {
                 + ord($frame[9]);
     } elseif ($header['hasmask']) {
       $header['mask'] = $frame[2] . $frame[3] . $frame[4] . $frame[5];
+      $header['start'] = 6;
     }
 
     return $header; 
   }
 
-  /** //!
+  /** 
    * Verarbeitet frame/buffer aus einem socket. 
    * Extrahiert Header und Payload und verarbeitet die Informationen.
    * Header daten in binär außer opcode(int) und length(int).
@@ -367,7 +351,7 @@ abstract class Socket {
    */
   function deframe(&$user, $frame) {
     $header = $this->getHeaderOfFrame($frame);
-    $payload = substr($frame, 6, $header["length"]); //length > 126 !
+    $payload = substr($frame, $header["start"], $header["length"]); //length > 126 !
     $payload = Utils::xorStr($payload, $header["mask"]);
 
     $data = []; 
@@ -377,81 +361,46 @@ abstract class Socket {
     LogHandler::writeLog("DEFRAME: ", true);
     LogHandler::writeLog("Frame: ". Utils::getBinOfFrame($frame));
     LogHandler::writeLog("payload: ". $data["payload"]);
-    LogHandler::writeLog($data);
-    return $data; //!todo
 
-    //check rsv in Header todo 
-    if (ord($header['rsv1']) + ord($header['rsv2']) + ord($header['rsv3']) > 0) {
-      //$this->disconnect($user); // todo: fail connection
-      return false;
-    }
-    //opcode Verarbeiten todo
-    
+    // //check rsv in Header //todo 
+    // if (ord($header['rsv1']) + ord($header['rsv2']) + ord($header['rsv3']) > 0) {
+    //   //$this->disconnect($user); // todo: fail connection
+    //   return false;
+    // }
+
+    //opcode Verarbeiten
     LogHandler::writeLog("opcode: ". $header["opcode"]);
     switch($header["opcode"]) {
       case 0:
-      case 1:
-        //msg
-      case 2:
-        //binary-data
+      case 1: //msg
+        LogHandler::writeLog($data);
+      case 2: //binary-data
         break;
+
       case 8: //closing frame
-        //close the connection
         LogHandler::writeLog("->got closing Frame");
         $this->disconnect($user);
         return "";
-      case 9: //ping frame
-        //send pong frame w/ exact same payload data as ping frame 
+
+      case 9: //ping frame info:kein client-ping eingebaut, aber server-ping system 
         LogHandler::writeLog("->got ping Frame");
         $reply = $this->frame($payload, $user, 'pong'); 
-        socket_write($user->socket,$reply,strlen($reply));
+        $this->send($user, $reply);
         return false;
+
       case 10://pong frame
-        //kein client-ping system vorhanden
         LogHandler::writeLog("->got pong Frame (do nothing)");
         return false;
         break;
+
       default:
-        //$this->disconnect($user); // todo: fail connection
         return false;
         break;
     }
 
-    //mutiple Frames Handling | Frame > 2048 bits
-    if ($user->multipleFrames) {
-      $frame = $user->partialBuffer . $frame;
-      $user->multipleFrames = false;
-      return $this->deframe($user, $frame);
-    }
-
-    //extrahierte Daten vorranstellen 
-    //$payload = $user->partialMsg . $payload; //!
-
-    //solange länger
-    if ($header['length'] > strlen(Utils::xorStr($payload, $header["mask"]))) {
-      $user->multipleFrames = true;
-      $user->partialBuffer = $frame;
-      return false;
-    }
-
-    $payload = Utils::xorStr($payload, $header["mask"]);
-
-    if ($header['fin']) {
-      $user->partialMgs = "";
-      return $payload;
-    }
-
-    $user->partialMsg = $payload;
-    return false;
+    return $data; //!todo
+    //mutiple Frames Handling | Frame > 2048 bits //todo
     
-    //dec
-    $data["payload"] = $payload;
-    $data["header"] = $header;
-
-    // echo "\n\n Data: \n"; //!
-    // var_dump($data);
-
-    return $data;
   }
 
   /**
@@ -554,8 +503,8 @@ abstract class Socket {
       $frame = $msg;
       $frame = $this->frame($msg);
       socket_write($user->socket, $frame, strlen($frame));
-    } else { //! storage system überarbeiten
-      $this->storage[] += ["user" => $user, "msg" => $msg];
+    } else { //! storage system nutzen
+      $this->storage[] += ["user" => $user->id, "msg" => $msg];
     }
   }
 
