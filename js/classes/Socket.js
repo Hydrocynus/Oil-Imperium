@@ -17,25 +17,33 @@ class Socket {
   constructor(host, port) {
     this.host = host;
     this.port = port;
+    this.socket;
     this.onopen, this.onmessage;
   }
 
   /**
    * Oeffnet das Socket.
-   * @author Tobias
-   * @version 09.01.2021
+   * @author Tobias Tim
+   * @version 24.01.2021 (Tim: prueft ob Server bereits offen ist)
    * @since 09.01.2021
    * @returns {void}
    */
   open() {
     this.maxTryCount = 3;
     this.url = "ws://" + this.host + ":" + this.port;
-    this.openWebSocket(this.url);
+
+    this.socket = new WebSocket(this.url);
+    this.socket.onerror   = () => {
+      this.openWebSocket(this.url);
+    }
+
+    this.socket.onopen    = this.onopen;
+    this.socket.onmessage = this.onmessage;
   }
 
   /**
    * Versucht das WebSocket mit mehreren Versuchen zu starten.
-   * @author Tobias
+   * @author Tobias Tim
    * @version 09.01.2021 (Tobias: onopen und onmessage Methoden)
    * @since 03.01.2021
    * @param {String} url URL des Websockets.
@@ -45,9 +53,9 @@ class Socket {
     if (this.maxTryCount == 0) return;
     this.maxTryCount--;
     await this.startWebSocket();
+    Utils.delay(1000);
     this.socket = new WebSocket(url);
     this.socket.onerror   = () => {
-      Utils.delay(1000);
       this.openWebSocket(url);
     }
     this.socket.onopen    = this.onopen;
@@ -63,7 +71,7 @@ class Socket {
    * @returns {void}
    */
   send(msg) {
-    this.socket.send(msg);
+    this.socket.send(msg)
   }
 
   /**

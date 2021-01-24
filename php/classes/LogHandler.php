@@ -10,8 +10,10 @@ class LogHandler {
    * @param string $file Dateiname bzw Path der Logdatei.
    * @param string $txt neuer Logeintrag.
    */
-  public static function writeLog($txt, $file ="log.txt") {
-    $newLog = date("Y.m.d H:i") . ": " . $txt . "\r\n";
+  public static function writeLog($txt, $newLine = false, $file ="./logs/log.txt") {
+    $newLog = "";
+    if ($newLine) { $newLog = "\n";}
+    $newLog .= date("Y.m.d H:i") . ": " . $txt . "\r\n";
     $logFile = @fopen($file, "a");
     fwrite($logFile, $newLog);
     fclose($logFile);

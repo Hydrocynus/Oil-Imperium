@@ -4,6 +4,7 @@ abstract class Socket {
   protected $sockets = []; // Über Client aufrufen
   protected $master;
   protected $storage = []; // nicht eingebunden 
+  protected $serverid;
 
   function __construct($addr, $port) {
     $this->master = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
@@ -11,13 +12,14 @@ abstract class Socket {
     socket_bind($this->master, $addr, $port);
     socket_listen($this->master);
     $this->sockets["master"] = $this->master;
+    $this->serverid = uniqid();
   }
 
   abstract protected function onConnection($user);
   abstract protected function onMessage($user, $msg);
   abstract protected function onClose($user);
 
-  /** ? Sockets in Users speichern 
+  /** ? Sockets in Users für iterationen 
    * Gibt User vom zugehörigen socket. 
    * @author Tim
    * @version 08.12.2020 
@@ -41,22 +43,21 @@ abstract class Socket {
    * @author Tim
    * @version 03.12.2020 
    * @since 03.12.2020
+   * @return void
    */
   function start() {
-    LogHandler::writeLog("Server started");
+    LogHandler::writeLog("Server start() excecuted",true);
+    LogHandler::writeLog("Server id:". $this->serverid, true);
 
     while(true) {
-      LogHandler::writeLog("is alive--------------------");
-
+      LogHandler::writeLog("tack". $this->serverid, false, "./logs/ticks/".$this->serverid.".txt");
       //Heartbeat 
       foreach($this->sockets as $socket) {
 
         if ($socket == $this->master) { continue; }
+
         $u = $this->getUserBySocket($socket);
-        LogHandler::writeLog($socket);
-        LogHandler::writeLog("heartbeat: " . (time() - $u->lastPing));
-        if (time() -  $u->lastPing > 30 ) {
-          LogHandler::writeLog("send ping");
+        if (time() -  $u->lastPing >= 30 ) {
           $u->lastPing = time();
           $this->ping($u); 
         }
@@ -65,7 +66,7 @@ abstract class Socket {
       //Handle Sockets 
       $write = $except = null;
       $read = $this->sockets;
-      $sel = socket_select($read, $write, $except, 1);
+      socket_select($read, $write, $except, 1);
             
       foreach($read as $socket) {
         //Master Socket
@@ -77,16 +78,16 @@ abstract class Socket {
         else {//Client Handling
           //Client recv
           $recv = @socket_recv($socket, $buf, "2048", 0);
-          LogHandler::writeLog("recv: ". $recv);
+          //LogHandler::writeLog("recv: ". $recv);
 
           if ($recv === false) { //socket error
             
             $sockErrNo = socket_last_error($socket);
-            LogHandler::writeLog("Socket Error: ". $sockErrNo . "|". socket_strerror($sockErrNo));
+            LogHandler::writeLog("ERROR: Socket-err: ". $sockErrNo . "|". socket_strerror($sockErrNo));
             $this->disconnect($socket); 
           } 
           else if ($recv == 0) { //connection lost handling
-            LogHandler::writeLog("connection Lost");
+            LogHandler::writeLog("ERROR: connection lost");
             $this->disconnect($socket); 
           }
           else { //client socket handling
@@ -100,7 +101,7 @@ abstract class Socket {
             else {             
               //recieve data
               $data = $this->deframe($u, $buf);
-              LogHandler::writeLog("recv data: ". $data["payload"]);
+              //LogHandler::writeLog("recv data: ". $data["payload"]);
               // $this->broadcast($data["payload"]);
               $this->onMessage($u, $data["payload"]);
             }
@@ -116,17 +117,32 @@ abstract class Socket {
    * Legt neuen User im users-Array an.
    * Legt neuen socket im socket-Array an: //!
    * @author Tim
-   * @version 03.12.2020 
+   * @version 23.01.2021 
    * @since 03.12.2020
    * @param object Socket Object das sich mit dem master-Socket Verbindet. 
+   * @return void
    */
   function connect($socket) {
-    $newUser = new SocketClient(uniqid(), $socket);
+    //is nh user drinne? 
+    foreach ($this->users as $u) {
+      if (!isset($u->socket)) {
+        LogHandler::writeLog("SOCKETLESS user: ". $u->id);
+        $newUser = $u;
+      }
+    }
+    //nein ->
+    if (isset($newUser)) {
+      $newUser->setUser($socket);
+      LogHandler::writeLog("socketless user reconected: ". $newUser->id);
+    } else {
+      $newUser = new SocketClient(uniqid(), $socket); 
+    }
+
     $this->users[$newUser->id] = $newUser;
     $this->sockets[$newUser->id] = $socket;
     
     LogHandler::writeLog("Connect: ". $newUser->id);
-    //$this->userList();
+    $this->userList();
   }
 
   /**
@@ -136,6 +152,7 @@ abstract class Socket {
    * @version 23.01.2021 
    * @since 03.12.2020
    * @param object Socket Object, welches entfernt werden soll
+   * @return void
    */
   function disconnect(&$socket) {
     $oldUser = $this->getUserBySocket($socket);
@@ -146,10 +163,11 @@ abstract class Socket {
     unset($this->sockets[$oldUser->id]);
     $this->users[$oldUser->id]->unsetUser();
 
-    $this->onClose($oldUser);
+    $this->onClose($oldUser); //! notw?
     socket_close($oldUser->socket);
 
     LogHandler::writeLog("Disconnect user: ". $oldUser->id);
+    $this->userList();
     // $msg = $this->frame('', $oldUser, 'close'); //!
     // @socket_write($oldUser->socket, $msg, strlen($msg));
   }
@@ -163,8 +181,9 @@ abstract class Socket {
    * @version 23.01.2021
    * @since 03.12.2020
    * @param object Socket Object, welcher user gelöscht werden soll. 
+   * @return void
    */
-  function deleteUser($socket) {
+  function deleteUser(&$socket) {
     $oldUser = $this->getUserBySocket($socket);
     $this->disconnect($socket);
 
@@ -173,6 +192,7 @@ abstract class Socket {
     unset($this->users[$oldUser->id]);
 
     LogHandler::writeLog("DELETE user: ". $oldUser->id);
+    $this->userList();
     // $msg = $this->frame('', $oldUser, 'close'); //!
     // @socket_write($oldUser->socket, $msg, strlen($msg));
   }
@@ -188,6 +208,7 @@ abstract class Socket {
    * @since 03.12.2020
    * @param object user User, welcher sich Verbinden will.
    * @param string buf Request Header.
+   * @return void
    */
   function handshake($user, $buf) {
     $GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
@@ -329,10 +350,10 @@ abstract class Socket {
     $data["payload"] = $payload;
     $data["header"] = $header;
 
-    LogHandler::writeLog("data pl: ". $data["payload"]);
-    LogHandler::writeLog("Opcode: ". $header["opcode"]);
-    // echo "\n\n Data: \n"; //!
-    // var_dump($data);
+    LogHandler::writeLog("DEFRAME: ", true);
+    LogHandler::writeLog("Frame: ". Utils::getBinOfFrame($frame));
+    LogHandler::writeLog("opcode: ". $header["opcode"]);
+    LogHandler::writeLog("payload: ". $data["payload"]);
 
     return $data; //!todo
     //Header Verarbeiten 
@@ -356,7 +377,6 @@ abstract class Socket {
         return "";
       case 9: //is ping frame
         //send pong frame w/ exact same payload data as ping frame 
-        LogHandler::writeLog("ping frame");
 
         $reply = $this->frame($payload,$user,'pong'); //todo frame
         socket_write($user->socket,$reply,strlen($reply));
@@ -368,10 +388,6 @@ abstract class Socket {
         return false;
         break;
     }
- 
-    //!
-    LogHandler::writeLog("deframed: " .$payload);
-    LogHandler::writeLog("opcode: ". $header["opcode"]);
 
     //mutiple Frames Handling | Frame > 2048 bits
     if ($user->multipleFrames) {
@@ -500,10 +516,11 @@ abstract class Socket {
    * @since 03.01.2021 
    * @param object user Object.
    * @param string msg zu Versendende Nachrricht.
+   * @return void
    */
   function send($user, $msg) {
-    LogHandler::writeLog("Send to Usr");
-    LogHandler::writeLog("msg: ".$msg);
+    LogHandler::writeLog("SEND to: ". $user->id);
+    LogHandler::writeLog("Sended Msg: ".$msg);
 
     if ($user->handshake) {
       $frame = $msg;
@@ -521,10 +538,12 @@ abstract class Socket {
    * @version 03.01.2021 
    * @since 03.01.2021 
    * @param string msg Nachrricht.
+   * @return void
    */
   function broadcast($msg) {
     foreach ($this->users as $user) {
       if ($user->socket) {
+        LogHandler::writeLog("Frame: ". Utils::getBinOfFrame($msg));
         $this->send($user, $msg);
       }
     }
@@ -537,33 +556,47 @@ abstract class Socket {
    * @since 21.01.2021 
    * @param object user Object.
    * @param object user user welcher angepingt werden soll.
+   * @return void
    */
   function ping($user) {
-    LogHandler::writeLog("ping gesendet");
-    
     if ($user->handshake) {
-      $frame = $this->frame("PING", "ping");
+      $frame = $this->frame("PONG", "ping");
       socket_write($user->socket, $frame, strlen($frame));
+      LogHandler::writeLog("PING to: ". $user->id, true);
+      
     } else { 
-      LogHandler::writeLog("user nicht mehr verbunden für Ping");
+      LogHandler::writeLog("PING Error: user not connected");
     }
   }
 
+//--Hilfsfunktionen
   /**
-   * Zeigt alle Users des Sockets an.
+   * Zeigt alle Users des Sockets im log an.
    * @author Tim
    * @version 23.01.2021
    * @since 23.01.2021
+   * @return void
    */
   function userList() {
-    LogHandler::writeLog("---------USERLIST-------");
+    $u = count($this->users);
+    $s = count($this->sockets);
+
+    LogHandler::writeLog("-----------------------", true, "./logs/list.txt");
+
+    LogHandler::writeLog("USERLIST (".$u.")", false, "./logs/list.txt");
     foreach ($this->users as $user) {
-      LogHandler::writeLog("User: ". $user->id);
+      $noSock = "";
+      if (!isset($user->socket)) {
+        $noSock = " (not connected)";
+      }
+      LogHandler::writeLog("User: ". $user->id. $noSock, false, "./logs/list.txt");
     } 
     
-    LogHandler::writeLog("-------USERLIST-------");
-    foreach ($this->sockets as $socket) {
-      LogHandler::writeLog("Sockets: ". $socket);
+    LogHandler::writeLog("SocketLIST (".$s.")", false, "./logs/list.txt");
+    foreach ($this->sockets as $k => $socket) {
+      LogHandler::writeLog("Sockets: ". $k, false, "./logs/list.txt");
     } 
+    
+    LogHandler::writeLog("-----------------------", false, "./logs/list.txt");
   }
 }

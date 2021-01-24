@@ -5,36 +5,37 @@ class OilSocket extends Socket {
   }
 
   protected function onMessage($user, $msg) {
-    switch($msg) {
+    
+    try { $msg = json_decode($msg); }
+    catch (Exception $e) { return ; }
+    $cmd = $msg[0];
+    $msg = $msg[1];
+    
+    switch($cmd) {
       case "PING": 
         return;
         break;
       case "del": 
+        $this->deleteUser($user->socket);
+        $this->userList();
         break;
       case "dis": 
+        $this->disconnect($user->socket);
+        $this->userList();
         break;
-      case "huhu": 
-        LogHandler::writeLog("huhu");
+      case "LogUser": 
+        $this->userList();
+        break;
+      case "userChange": 
+        $this->broadcastInstruction($cmd, $msg);
         break;
       default: 
-          LogHandler::writeLog("Server got: ". $msg);
-          LogHandler::writeLog("from: ". $user->id);
-      
-          $this->broadcast($msg);
+        LogHandler::writeLog("Server got: ". $msg);
+        LogHandler::writeLog("from: ". $user->id);
         break;
     }
-
-    // try { $msg = json_decode($msg); }
-    // catch (Exception $e) { return ; }
-    // $cmd = $msg[0];
-    // $msg  = $msg[1];
-    // return broadcastInstruction($cmd, $msg);
-    if ($msg == "del") {
-      $this->deleteUser($user->socket);
-    }
-    if ($msg == "dis") {
-      $this->disconnect($user->socket);
-    }
+    
+    
   }
 
   protected function onConnection($user) {
