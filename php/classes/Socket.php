@@ -50,22 +50,12 @@ abstract class Socket {
    * @return void
    */
   function start() {
-    LogHandler::writeLog("Server start() excecuted",true);
-    LogHandler::writeLog("Server id:". $this->serverid, true);
+    LogHandler::writeLog("Start Server(". $this->serverid.")", true);
 
     while(true) {
       LogHandler::writeLog("tack(". $this->serverid.")[". $this->state ."]", false, "./logs/ticks/".$this->serverid.".txt");
-      //Heartbeat @todo als fkt
-      foreach($this->sockets as $socket) {
-
-        if ($socket == $this->master) { continue; }
-
-        $u = $this->getUserBySocket($socket);
-        if (time() -  $u->lastPing >= 30 ) {
-          $u->lastPing = time();
-          $this->ping($u); 
-        }
-      } 
+      
+      $this->heartbeat(60);
 
       //Handle Sockets @todo als fkt
       $write = $except = null;
@@ -111,6 +101,46 @@ abstract class Socket {
 
   }
 
+//--Server funktionen
+
+  /** 
+   * Durchläuft alle User.
+   * Prüft anhand der Zeit des letzten Pings des Users, ob ein neuer Ping notwendig ist.
+   * @author Tim
+   * @version 09.01.2021
+   * @since 09.12.2020
+   * @param int pingTime die Differenz zwischen zwei Pings.
+   * @return void
+   */
+  function heartbeat($pingTime) {
+    foreach($this->sockets as $socket) {
+
+      if ($socket == $this->master) { continue; }
+
+      $u = $this->getUserBySocket($socket);
+      if (time() -  $u->lastPing >= $pingTime ) {
+        $u->lastPing = time();
+        $this->ping($u); 
+      }
+    } 
+  }
+
+  /** 
+   * Prüft ob User mit dem Server connected sind.
+   * Falls keine User vorhanden sind wird dieser geschlossen.
+   * @author Tim
+   * @version 24.01.2021
+   * @since 09.12.2020
+   * @return void
+   */
+  function stopServer() {
+    $u = $this->getUsers($this->users);
+
+    if (count($u["conUsers"]) <= 0) {
+      LogHandler::writeLog("STOP SERVER!",true);
+      exit();
+    }
+  }
 
 //--user-handling
 
@@ -185,23 +215,6 @@ abstract class Socket {
 
     LogHandler::writeLog("DELETE user: ". $id);
     $this->userList();
-  }
-
-  /** 
-   * Prüft ob User mit dem Server connected sind.
-   * Falls keine User vorhanden sind wird dieser geschlossen.
-   * @author Tim
-   * @version 24.01.2021
-   * @since 09.12.2020
-   * @return void
-   */
-  function stopServer() {
-    $u = $this->getUsers($this->users);
-
-    if (count($u["conUsers"]) <= 0) {
-      LogHandler::writeLog("STOP SERVER!",true);
-      exit();
-    }
   }
 
   /**
