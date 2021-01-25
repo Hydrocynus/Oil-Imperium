@@ -152,7 +152,7 @@ class Utils {
    * Random Hex wert für einen Random Farbcode
    * @author Jannis
    * @since 25.01.2021
-   * @return HexColorCode
+   * @return string HexColorCode
    */
   public static function randomHexColorCode() {
     $rand = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f');
