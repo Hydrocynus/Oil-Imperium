@@ -15,8 +15,8 @@ class LogHandler {
     if ($newLine) { $newLog = "\n";}
     $newLog .= date("Y.m.d H:i") . ": " . print_r($txt, true) . "\r\n";
     $logFile = @fopen($file, "a");
-    fwrite($logFile, $newLog);
-    fclose($logFile);
+    @fwrite($logFile, $newLog);
+    @fclose($logFile);
   }
 
   /** notw?
