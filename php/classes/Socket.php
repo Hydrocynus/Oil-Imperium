@@ -613,10 +613,7 @@ abstract class Socket {
     return $info;
   }
 
-  function sendPlayerlist($user) {
-    LogHandler::writeLog("in SENDPLAYERLIST");
-    LogHandler::writeLog($user);
-    
+  function sendPlayerlist($user) {    
     foreach($this->users as $u) {
       $this->send($user, json_encode(["userAdd", json_encode($u->getUserInfo())])); 
     }

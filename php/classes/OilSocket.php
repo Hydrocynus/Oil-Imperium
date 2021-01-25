@@ -26,7 +26,6 @@ class OilSocket extends Socket {
         $this->broadcastInstruction($cmd, $msg);
         break;
       case "getPlayerlist": 
-        LogHandler::writeLog("pre LIST");
         $this->sendPlayerlist($user);
         break; 
       default: 
@@ -46,8 +45,9 @@ class OilSocket extends Socket {
   }
 
   protected function onClose($user) {
-    // foreach($this->users as $u) 
-    //    $this->send($u, "<div class='srv'>Client {$user->id} hat uns verlassen!</div>");
+    $info = $user->getUserInfo();
+    $msg = json_encode(["userRemove", $info["id"]]);
+    $this->send($user, $msg);
   }
 
   /**
