@@ -88,7 +88,6 @@ class InstructionHandler {
 
   static socketOpen() {
     console.debug("socket opened");
-    gc.sendInstruction("getPlayerlist");
     d3.select("#lobby").classed("none", false);
     d3.select("#loading").classed("none", true);
   }
