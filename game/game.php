@@ -14,7 +14,7 @@ spl_autoload_register(function ($class) { require_once("classes/$class.php"); })
 </head>
 
 <body>
-  <div id="background" class="d-flex">
+  <div id="background" class="d-flex" style="user-select: None;">
     <div id="loading">
       <img src="../img/derrick.gif">
       <br>
