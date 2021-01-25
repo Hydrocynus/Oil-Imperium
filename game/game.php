@@ -37,7 +37,7 @@ spl_autoload_register(function ($class) { require_once("classes/$class.php"); })
               <div class="col">Name:<input id="name" type="text" value="Player" oninput="nameChange(this)"></div>
               <div class="col">Farbe:
                 <label for="farbe"></label>
-                <input id="farbe" type="color" value="Player" visible="false" onchange="colorChange(this)" style="display:none">
+                <input id="farbe" type="color" value="Player" visible="false" oninput="colorChange(this)" style="display:none">
               </div>
               <div class="col"><input id="confirm" type="checkbox" onchange="readyChange(this)"><label for="confirm">Bereit:</label></div>
 
