@@ -26,7 +26,7 @@ class OilSocket extends Socket {
         $this->broadcastInstruction($cmd, $val);
         break;
       case "getPlayerlist": 
-        $this->sendPlayerlist($user);
+        //$this->sendPlayerlist($user);
         break; 
       default: 
         LogHandler::writeLog("Server got: ". $val);
@@ -41,11 +41,14 @@ class OilSocket extends Socket {
     $info = $user->getUserInfo();
     $msg = json_encode(["userSelf", $info]);
     $this->send($user, $msg);
+    foreach($this->users as $u) {
+      $data = json_encode(["userAdd",$u->getUserInfo()]);
+      $this->send($user, $data); 
+    }
     $this->broadcastInstruction("userAdd", $info);
   }
 
   protected function onClose($user) {
-    LogHandler::writeLog("onClose FEUER");
     $info = $user->getUserInfo();
     $this->broadcastInstruction("userRemove", $info["id"]);
   }
