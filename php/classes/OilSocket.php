@@ -22,7 +22,9 @@ class OilSocket extends Socket {
         break;
       case "userChange":
       case "userAdd":
+        $msg = json_decode($msg, true);
         $user->setUserInfo($msg);
+        $msg = json_encode($msg);
         $this->broadcastInstruction($cmd, $msg);
         break;
       case "getPlayerlist": 
