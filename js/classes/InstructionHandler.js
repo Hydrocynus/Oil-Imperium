@@ -80,12 +80,14 @@ class InstructionHandler {
       case "userChange": this.userChange(value); break;
       case "userAdd": this.userAdd(value); break;
       case "showCard": this.showCard(value); break;
+      case "updateID": this.updateID(value); break;
       default: console.error("Unknown instruction command", instruction.cmd);
     }
   }
 
   static socketOpen() {
     console.debug("socket opened");
+    gc.sendInstruction("getPlayerlist");
     d3.select("#lobby").classed("none", false);
     d3.select("#loading").classed("none", true);
   }
@@ -106,6 +108,8 @@ class InstructionHandler {
   }
 
   static setUser(id, name, color, ready) {
+    if (id == localStorage.getItem("ID")) return;
+
     let playerRow = d3.select("#player-" + id);
   
     if (playerRow.node() === null) {
@@ -125,6 +129,10 @@ class InstructionHandler {
     if (name  !== null) playerRow.select(".col:nth-child(1)").text(name || "Player #" + id);
     if (color !== null) playerRow.select(".col:nth-child(1)").style("background-color", color || "#a0a0a0").style("color", Utils.fontColorAutoKontrastHex(color || "#a0a0a0"));
     if (ready !== null) playerRow.select(".col:nth-child(2)").text(ready ? "Bereit" : "");
+  }
+
+  static updateID(value) {
+    localStorage.setItem("ID", value);
   }
 
   /**
