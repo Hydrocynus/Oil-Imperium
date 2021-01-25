@@ -618,7 +618,7 @@ abstract class Socket {
     LogHandler::writeLog($user);
     
     foreach($this->users as $u) {
-      $this->send($user, ["userAdd", json_encode($u->getUserInfo())]); 
+      $this->send($user, json_encode(["userAdd", json_encode($u->getUserInfo())])); 
     }
   }
 }
