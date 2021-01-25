@@ -80,7 +80,8 @@ class InstructionHandler {
       case "userChange": this.userChange(value); break;
       case "userAdd": this.userAdd(value); break;
       case "showCard": this.showCard(value); break;
-      case "updateID": this.updateID(value); break;
+      case "userSelf": this.userSelf(value); break;
+      case "userRemove": this.userRemove(value); break;
       default: console.error("Unknown instruction command", instruction.cmd);
     }
   }
@@ -108,10 +109,11 @@ class InstructionHandler {
   }
 
   static setUser(id, name, color, ready) {
+    // Verhindert das Hinzufuegen von sich selbst
     if (id == localStorage.getItem("ID")) return;
 
+    // Fuegt den Nutzer als neuen hinzu, wenn er noch nicht existiert.
     let playerRow = d3.select("#player-" + id);
-  
     if (playerRow.node() === null) {
       let row = d3.select("#playerlist")
         .append("div")
@@ -125,14 +127,25 @@ class InstructionHandler {
         .classed("col", true);
     }
 
+    // Setzt Eigenschaften eines Spielers in der Liste
     playerRow = d3.select("#player-" + id);
     if (name  !== null) playerRow.select(".col:nth-child(1)").text(name || "Player #" + id);
     if (color !== null) playerRow.select(".col:nth-child(1)").style("background-color", color || "#a0a0a0").style("color", Utils.fontColorAutoKontrastHex(color || "#a0a0a0"));
     if (ready !== null) playerRow.select(".col:nth-child(2)").text(ready ? "Bereit" : "");
+
+    // Loescht alle Spielereintraege, die mit der eigenen ID uebereinstimmen
+    d3.select("#player-" + localStorage.getItem("ID")).remove();
   }
 
-  static updateID(value) {
-    localStorage.setItem("ID", value);
+  static userSelf(value) {
+    localStorage.setItem("ID", value.id);
+    d3.select("#name").text(value.name);
+    d3.select("#farbe").property("value", value.color).each((d,i,s) => colorChange(s[i]));
+    d3.select("#confirm").property("checked", value.ready);
+  }
+
+  static userRemove(id) {
+    d3.select("#player-" + id).remove();
   }
 
   /**
