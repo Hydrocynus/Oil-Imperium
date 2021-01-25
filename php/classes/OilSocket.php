@@ -22,8 +22,13 @@ class OilSocket extends Socket {
         break;
       case "userChange":
       case "userAdd":
+        $user->setUser($msg);
         $this->broadcastInstruction($cmd, $msg);
         break;
+      case "getPlayerlist": 
+        LogHandler::writeLog("pre LIST");
+        $this->sendPlayerlist($user);
+        break; 
       default: 
         LogHandler::writeLog("Server got: ". $msg);
         LogHandler::writeLog("from: ". $user->id);
@@ -34,13 +39,15 @@ class OilSocket extends Socket {
   }
 
   protected function onConnection($user) {
-      // foreach($this->users as $u) 
-      //$this->send($user, "conn Send");
+    $info = $user->getUserInfo();
+    $msg = json_encode(["dasBistDU", $info]);
+    $this->send($user, $msg);
+    $this->broadcastInstruction("newUser", $info);
   }
 
   protected function onClose($user) {
-      // foreach($this->users as $u) 
-      //    $this->send($u, "<div class='srv'>Client {$user->id} hat uns verlassen!</div>");
+    // foreach($this->users as $u) 
+    //    $this->send($u, "<div class='srv'>Client {$user->id} hat uns verlassen!</div>");
   }
 
   /**

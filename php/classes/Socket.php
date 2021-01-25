@@ -597,7 +597,7 @@ abstract class Socket {
    * @since 09.12.2020
    * @return array ["conUsers"] enthält alle Users mit socket; ["unConUsers"] enthält alle Users ohne socket
    */
-  function getUsers(&$users) {
+  function getUsers($users) {
     $info = []; 
     $info["conUsers"] = [];
     $info["unConUsers"] = [];
@@ -613,4 +613,12 @@ abstract class Socket {
     return $info;
   }
 
+  function sendPlayerlist($user) {
+    LogHandler::writeLog("in SENDPLAYERLIST");
+    LogHandler::writeLog($user);
+    
+    foreach($this->users as $u) {
+      $this->send($user, json_encode($u->getUserInfo())); 
+    }
+  }
 }
