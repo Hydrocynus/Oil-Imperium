@@ -17,8 +17,8 @@ class SocketClient {
     $this->id = $id;
     $this->socket = $socket;
     $this->lastPing = time();
-    $this->name = "Pedda";
-    $this->color = "#420420";
+    $this->name = "Player #$id";
+    $this->color = Utils::randomHexColorCode();
     $this->ready = "";
   }
 
