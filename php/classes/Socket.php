@@ -573,18 +573,18 @@ abstract class Socket {
 
     LogHandler::writeLog("-----------------------", true, "./logs/list.txt");
 
-    LogHandler::writeLog("USERLIST (".$u.")", false, "./logs/list.txt");
+    LogHandler::writeLog("USERLIST ($u)", false, "./logs/list.txt");
     foreach ($this->users as $user) {
       $noSock = "";
       if (!isset($user->socket)) {
         $noSock = " (not connected)";
       }
-      LogHandler::writeLog("User: ". $user->id." ".$user->name ." ".$user->color . $noSock, false, "./logs/list.txt");
+      LogHandler::writeLog("User: $user->id $user->name $user->color $noSock", false, "./logs/list.txt");
     } 
     
-    LogHandler::writeLog("SocketLIST (".$s.")", false, "./logs/list.txt");
+    LogHandler::writeLog("SocketLIST ($s)", false, "./logs/list.txt");
     foreach ($this->sockets as $k => $socket) {
-      LogHandler::writeLog("Sockets: ". $k, false, "./logs/list.txt");
+      LogHandler::writeLog("Sockets:  $k", false, "./logs/list.txt");
     } 
     
     LogHandler::writeLog("-----------------------", false, "./logs/list.txt");
@@ -615,7 +615,7 @@ abstract class Socket {
 
   function sendPlayerlist($user) {    
     foreach($this->users as $u) {
-      $this->send($user, json_encode(["userAdd", json_encode($u->getUserInfo())])); 
+      $this->send($user, json_encode(["userAdd",$u->getUserInfo()])); 
     }
   }
 }
