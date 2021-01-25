@@ -22,7 +22,7 @@ class OilSocket extends Socket {
         break;
       case "userChange":
       case "userAdd":
-        $user->setUser($msg);
+        $user->setUserInfo($msg);
         $this->broadcastInstruction($cmd, $msg);
         break;
       case "getPlayerlist": 
@@ -45,9 +45,9 @@ class OilSocket extends Socket {
   }
 
   protected function onClose($user) {
+    LogHandler::writeLog("onClose FEUER");
     $info = $user->getUserInfo();
-    $msg = json_encode(["userRemove", $info["id"]]);
-    $this->send($user, $msg);
+    $this->broadcastInstruction("userRemove", $info["id"]);
   }
 
   /**
