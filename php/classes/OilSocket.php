@@ -20,7 +20,8 @@ class OilSocket extends Socket {
       case "LogUser": 
         $this->userList();
         break;
-      case "userChange": 
+      case "userChange":
+      case "userAdd":
         $this->broadcastInstruction($cmd, $msg);
         break;
       default: 
