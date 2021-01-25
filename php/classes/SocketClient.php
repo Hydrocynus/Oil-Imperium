@@ -69,10 +69,10 @@ class SocketClient {
     return $info; 
   }
 
-  function setUserInfo($name = null, $color = null, $ready = null) {
-    if ($name !== null)  $this->name = $name; 
-    if ($color !== null)  $this->color = $color; 
-    if ($ready !== null)  $this->ready = $ready; 
+  function setUserInfo($a) {
+    if ($a["name"] !== null)  $this->name = $a["name"]; 
+    if ($a["color"] !== null)  $this->color = $a["color"]; 
+    if ($a["ready"] !== null)  $this->ready = $a["ready"]; 
   }
 
   function userChange($value) {
