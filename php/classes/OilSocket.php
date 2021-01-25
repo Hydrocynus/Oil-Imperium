@@ -42,7 +42,7 @@ class OilSocket extends Socket {
     $info = $user->getUserInfo();
     $msg = json_encode(["userSelf", $info]);
     $this->send($user, $msg);
-    $this->broadcastInstruction("newUser", $info) ;
+    $this->broadcastInstruction("userAdd", $info) ;
   }
 
   protected function onClose($user) {
