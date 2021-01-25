@@ -96,9 +96,9 @@ class InstructionHandler {
     for (let k in value) {
       switch (k) {
         case "id": break;
-        case "name":  this.setUser(value.id, value.name); break;
-        case "color": this.setUser(value.id, null, value.color); break;
-        case "ready": this.setUser(value.id, null, null, value.ready); break;
+        case "name":  this.setUser(value.id, value.name, null,        null);        break;
+        case "color": this.setUser(value.id, null,       value.color, null);        break;
+        case "ready": this.setUser(value.id, null,       null,        value.ready); break;
       }
     }
   }
