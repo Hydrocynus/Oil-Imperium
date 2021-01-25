@@ -579,7 +579,7 @@ abstract class Socket {
       if (!isset($user->socket)) {
         $noSock = " (not connected)";
       }
-      LogHandler::writeLog("User: ". $user->id. $noSock, false, "./logs/list.txt");
+      LogHandler::writeLog("User: ". $user->id." ".$user->name ." ".$user->color . $noSock, false, "./logs/list.txt");
     } 
     
     LogHandler::writeLog("SocketLIST (".$s.")", false, "./logs/list.txt");
