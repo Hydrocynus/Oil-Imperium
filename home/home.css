@@ -14,8 +14,9 @@ html, body, #background, .mask{
 
 /* Hintergrundbild */
 #background {
-  background-image: url('../img/Oil.png');
+  background-image: url('../img/background-min.png');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
+  background-color: black;
 }
