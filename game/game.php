@@ -27,14 +27,14 @@ spl_autoload_register(function ($class) { require_once("classes/$class.php"); })
         <h1 class="text-white">Lobby</h1>
         <h6 class="text-uppercase text-white">—&nbsp&nbsp Spielcode: <span id="code">----</span> &nbsp&nbsp—</h6>
         <!-- form -->
-        <form class="row-12" action="" method="get">
+        <div class="row-12" action="" method="get">
 
           <!-- conatiner -->
           <div class="container">
             <div class="row">&nbsp;</div>
             <!-- Eigende Spieler anpassungen -->
             <div class="row">
-              <div class="col">Name:<input type="text" value="Player" onchange="nameChange(this)"></div>
+              <div class="col">Name:<input id="name" type="text" value="Player" oninput="nameChange(this)"></div>
               <div class="col">Farbe:
                 <label for="farbe"></label>
                 <input id="farbe" type="color" value="Player" visible="false" onchange="colorChange(this)" style="display:none">
@@ -66,7 +66,7 @@ spl_autoload_register(function ($class) { require_once("classes/$class.php"); })
             <!-- blur -->
           </div>
           <!-- conatiner -->
-        </form>
+        </div>
         <!-- form -->
       </div>
       <!-- Container -->
