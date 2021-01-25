@@ -35,9 +35,9 @@ class InstructionHandler {
   static extractInstruction(message) {
     try {
       message = JSON.parse(message);
-      if (!this.isValidInstruction(message)) {
-        throw "erol";
-      }
+      // if (!this.isValidInstruction(message)) {
+      //   throw "erol";
+      // }
     } catch (e) {
       console.error(e);
       message = [false, false];
@@ -72,8 +72,8 @@ class InstructionHandler {
    * @returns {void} 
    */
   static handle(instruction) {
-    let value;
-    try { value = JSON.parse(instruction.value); } catch {}
+    let value = instruction.value;
+    // try { value = JSON.parse(instruction.value); } catch {}
 
     switch (instruction.cmd) {
       case "socketOpen": this.socketOpen(); break;
